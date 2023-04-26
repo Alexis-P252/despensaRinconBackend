@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import uteclab.despensaRincon.entities.Categoria;
-import uteclab.despensaRincon.models.services.CategoriaService;
+import uteclab.despensaRincon.entities.Aviso;
+import uteclab.despensaRincon.models.services.AvisoService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,57 +17,60 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/dr/categoria")
-public class CategoriaController {
+@RequestMapping("/dr/aviso")
+
+public class AvisoController {
+
     @Autowired
-    private CategoriaService categoriaService;
+    private AvisoService avisoService;
     @GetMapping("")
-    public List<Categoria> findAll() {
-        return categoriaService.findAll();
+    public List<Aviso> findAll() {
+        return avisoService.findAll();
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
-        Categoria ca = null;
+        Aviso aviso = null;
         Map<String, Object> response = new HashMap<>();
         try {
-            ca=categoriaService.findById(id);
+            aviso = avisoService.findById(id);
         }catch (DataAccessException e){
             response.put ("msg","Error al acceder a la base de datos");
             response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if (ca==null){
-            response.put("msg","No existe una categoria con ese id");
+        if (aviso==null){
+            response.put("msg","No existe un aviso con ese id");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<Categoria>(ca,HttpStatus.OK);
+        return new ResponseEntity<Aviso>(aviso,HttpStatus.OK);
     }
     @PostMapping("")
-    public ResponseEntity<?> create(@RequestBody Categoria categoria)     {
-        Categoria newCategoria =null;
+    public ResponseEntity<?> create(@RequestBody Aviso aviso)     {
+        Aviso newAviso =null;
         Map <String,Object> response = new HashMap<>();
 
         try{
-            newCategoria = categoriaService.save(categoria);
+            newAviso = avisoService.save(aviso);
         } catch (DataAccessException e){
-            response.put("msg","Error al intentar actualizar o ingresar la Categoria");
+            response.put("msg","Error al intentar actualizar o ingresar el aviso");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put ("msg", "Categoria creada correctamente");
-        response.put("categoria", newCategoria);
+        response.put ("msg", "Aviso creado correctamente");
+        response.put("aviso", newAviso);
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@Valid @RequestBody Categoria categoria, BindingResult result, @PathVariable(value="id")Long id  ) {
+    public ResponseEntity<?> update(@Valid @RequestBody Aviso aviso, BindingResult result, @PathVariable(value="id")Long id  ) {
 
-        Categoria categoriaActual = categoriaService.findById(id);
+        Aviso avisoActual = avisoService.findById(id);
 
         Map<String,Object> response = new HashMap<>();
 
-        if(categoriaActual == null) {
-            response.put("msg","No existe una categoria con id = ".concat(id.toString()));
+        if(avisoActual == null) {
+            response.put("msg","No existe un aviso con id = ".concat(id.toString()));
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
         }
 
@@ -78,23 +81,23 @@ public class CategoriaController {
                 errors.add("En el campo: " + err.getField() + " - " +err.getDefaultMessage());
             }
             response.put("errors", errors);
-            response.put("msg", "Error al validar la categoria");
+            response.put("msg", "Error al validar el aviso");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
 
         }
 
-
-        categoriaActual.setNombre(categoria.getNombre());
+        avisoActual.setTitulo(aviso.getTitulo());
+        avisoActual.setDescripcion(aviso.getDescripcion());
 
         try {
-            categoriaActual = categoriaService.save(categoriaActual);
+            avisoActual = avisoService.save(avisoActual);
         }catch(DataAccessException e) {
-            response.put("msg","Error al intentar editar la categoria");
+            response.put("msg","Error al intentar editar el aviso");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put("msg", "Category actualizada correctamente");
-        response.put("categoria", categoriaActual);
+        response.put("msg", "Aviso actualizado correctamente");
+        response.put("aviso", avisoActual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
     }
 
@@ -103,27 +106,24 @@ public class CategoriaController {
 
         Map<String,Object> response = new HashMap<>();
 
-        if(categoriaService.findById(id) != null ){
+        if(avisoService.findById(id) != null ){
             try{
-                categoriaService.deleteById(id);
+                avisoService.deleteById(id);
 
             }catch(DataAccessException e){
-                response.put("msg","Hubo un error al intentar eliminar la categoria");
+                response.put("msg","Hubo un error al intentar eliminar el aviso");
                 response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
                 return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            response.put("msg","Categoria eliminada correctamente");
+            response.put("msg","Aviso eliminado correctamente");
             return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
 
         }else{
-            response.put("msg","Error tal intentar eliminar la categoria");
-            response.put("error", "No existe una categoria con id = " + id);
+            response.put("msg","Error al intentar eliminar el aviso");
+            response.put("error", "No existe un aviso con id = " + id);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
 
     }
-
-
-
 }
