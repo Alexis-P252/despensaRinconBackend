@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
 @Entity
-public class LineaCompra {
+public class LineaVenta {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -46,5 +46,4 @@ public class LineaCompra {
     public void setProducto(Producto producto) {
         this.producto = producto;
     }
-
 }
