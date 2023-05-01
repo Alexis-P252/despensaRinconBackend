@@ -17,7 +17,7 @@ public class Venta {
     private Float total;
     private Float montoDeuda;
     private List<LineaVenta> lineasVenta;
-    @Column(nullable = true)
+  //  @Column(nullable = true)
     private ClienteRegular cliente;
 
     public Long getId() {
