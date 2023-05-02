@@ -16,8 +16,10 @@ public class Venta {
     private String comentario;
     private Float total;
     private Float montoDeuda;
+    @OneToMany
     private List<LineaVenta> lineasVenta;
   //  @Column(nullable = true)
+    @ManyToOne
     private ClienteRegular cliente;
 
     public Long getId() {

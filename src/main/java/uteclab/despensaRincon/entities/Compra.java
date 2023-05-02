@@ -1,9 +1,6 @@
 package uteclab.despensaRincon.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.Date;
@@ -17,6 +14,7 @@ public class Compra {
     private Date fecha;
     private String comentario;
     private Float total;
+    @OneToMany
     private List<LineaCompra> lineasCompra;
 
     public Long getId() {

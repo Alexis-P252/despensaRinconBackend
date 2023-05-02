@@ -15,6 +15,7 @@ public class Proveedor {
     private String direccion;
 
     private String  correo;
+    @Column(nullable = true)
     private String imagen;
     @ManyToMany
     private List<Vendedor> vendedores;

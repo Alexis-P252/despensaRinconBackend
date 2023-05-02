@@ -12,12 +12,14 @@ public class Producto {
     private String nombre;
 
     private String descripcion;
+
     private float precio_compra;
+
     private float precio_venta;
     private long stock;
 
     private long stock_minimo;
-
+    @Column(nullable=true)
     private String imagen;
     private boolean visible;
 
