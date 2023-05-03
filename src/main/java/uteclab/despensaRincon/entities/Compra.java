@@ -17,6 +17,9 @@ public class Compra {
     @OneToMany
     private List<LineaCompra> lineasCompra;
 
+    @ManyToOne
+    private Proveedor proveedor;
+
     public Long getId() {
         return id;
     }
@@ -55,5 +58,13 @@ public class Compra {
 
     public void setLineasCompra(List<LineaCompra> lineasCompra) {
         this.lineasCompra = lineasCompra;
+    }
+
+    public Proveedor getProveedor() {
+        return proveedor;
+    }
+
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
     }
 }
