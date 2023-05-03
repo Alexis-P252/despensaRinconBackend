@@ -22,6 +22,11 @@ public class ProductoService implements IProductoService {
     }
 
     @Override
+    public Producto findByNombre(String nombre) {
+        return productoDao.findByNombre(nombre);
+    }
+
+    @Override
     public Producto save(Producto pr) {
         return productoDao.save(pr);
     }
@@ -30,4 +35,5 @@ public class ProductoService implements IProductoService {
     public void deleteById(Long id) {
             productoDao.deleteById(id);
     }
+
 }

@@ -9,6 +9,8 @@ public interface IProductoService {
     public List<Producto> findAll();
     //// aca tengo una duda
     public Producto findById(Long id);
+    public Producto findByNombre(String nombre);
+
     public Producto save (Producto em);
     public void deleteById (Long id);
 }

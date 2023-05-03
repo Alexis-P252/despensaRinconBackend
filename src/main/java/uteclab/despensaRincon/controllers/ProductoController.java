@@ -44,6 +44,23 @@ public class ProductoController {
         }
         return new ResponseEntity<Producto>(pr,HttpStatus.OK);
     }
+    @GetMapping("/nombre/{nombre}")
+    public ResponseEntity<?> findById(@PathVariable(value="nombre") String nombre){
+        Producto pr = null;
+        Map<String, Object> response = new HashMap<>();
+        try {
+            pr=productoService.findByNombre(nombre);
+        }catch (DataAccessException e){
+            response.put ("msg","Error al acceder a la base de datos");
+            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if (pr==null){
+            response.put("msg","No existe un producto con ese nombre");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<Producto>(pr,HttpStatus.OK);
+    }
 
     @PostMapping("")
     public ResponseEntity<?> create(@RequestBody Producto producto)     {
