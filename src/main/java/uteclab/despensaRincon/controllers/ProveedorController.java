@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import uteclab.despensaRincon.entities.Producto;
 import uteclab.despensaRincon.entities.Proveedor;
+import uteclab.despensaRincon.entities.Vendedor;
 import uteclab.despensaRincon.models.services.ProveedorService;
 
 import java.util.ArrayList;
@@ -43,6 +44,22 @@ public class ProveedorController {
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<Proveedor>(proveedor,HttpStatus.OK);
+    }
+    @PostMapping("")
+    public ResponseEntity<?> create(@RequestBody Proveedor proveedor)     {
+        Proveedor newProveedor =null;
+        Map <String,Object> response = new HashMap<>();
+
+        try{
+            newProveedor = proveedorService.save(proveedor);
+        } catch (DataAccessException e){
+            response.put("msg","Error al intentar ingresar el Proveedor");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put ("msg", "Datos del Proveeedor ingresados correctamente");
+        response.put("proveedor", newProveedor);
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
