@@ -28,6 +28,7 @@ public class VendedorController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
+
         Vendedor ve = null;
         Map<String, Object> response = new HashMap<>();
         try {
@@ -48,6 +49,16 @@ public class VendedorController {
         Vendedor newVendedor =null;
         Map <String,Object> response = new HashMap<>();
 
+        if(!vendedor.getTelefono().matches("^\\+?[0-9]{8,}$")){
+            response.put("msg", "El telefono ingresado no tiene un formato valido");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        if(!vendedor.getCorreo().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")){
+            response.put("msg", "El correo ingresado no tiene un formato valido");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+
         try{
             newVendedor = vendedorService.save(vendedor);
         } catch (DataAccessException e){
@@ -61,7 +72,6 @@ public class VendedorController {
     }
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Vendedor vendedor, BindingResult result, @PathVariable(value="id")Long id ) {
-
         Vendedor vendedorActual = vendedorService.findById(id);
 
         Map<String,Object> response = new HashMap<>();
@@ -69,6 +79,16 @@ public class VendedorController {
         if(vendedorActual == null) {
             response.put("msg","No existe un vendedor con id = ".concat(id.toString()));
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        if(!vendedor.getTelefono().matches("^\\+?[0-9]{8,}$")){
+            response.put("msg", "El telefono ingresado no tiene un formato valido");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        if(!vendedor.getCorreo().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")){
+            response.put("msg", "El correo ingresado no tiene un formato valido");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
 
         if(result.hasErrors()){

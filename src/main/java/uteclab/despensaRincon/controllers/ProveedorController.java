@@ -49,6 +49,10 @@ public class ProveedorController {
     public ResponseEntity<?> create(@RequestBody Proveedor proveedor)     {
         Proveedor newProveedor =null;
         Map <String,Object> response = new HashMap<>();
+        if(!proveedor.getCorreo().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")){
+            response.put("msg", "El correo ingresado no tiene un formato valido");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
 
         try{
             newProveedor = proveedorService.save(proveedor);
@@ -84,6 +88,11 @@ public class ProveedorController {
             response.put("msg", "Error al validar el proveedor");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
 
+        }
+
+        if(!proveedor.getCorreo().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")){
+            response.put("msg", "El correo ingresado no tiene un formato valido");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
 
         proveedorActual.setNombre(proveedor.getNombre());
