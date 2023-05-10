@@ -45,7 +45,7 @@ public class ProductoController {
         return new ResponseEntity<Producto>(pr,HttpStatus.OK);
     }
     @GetMapping("/nombre/{nombre}")
-    public ResponseEntity<?> findById(@PathVariable(value="nombre") String nombre){
+    public ResponseEntity<?> findByNombre(@PathVariable(value="nombre") String nombre){
         Producto pr = null;
         Map<String, Object> response = new HashMap<>();
         try {
