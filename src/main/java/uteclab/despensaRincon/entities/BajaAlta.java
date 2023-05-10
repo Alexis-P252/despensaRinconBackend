@@ -11,6 +11,7 @@ public class BajaAlta {
     private Boolean alta;
     //si es alta true y false baja;
 
+    @Temporal(TemporalType.DATE)
     private Date fecha;
     private String motivo;
     private Long cantidad;

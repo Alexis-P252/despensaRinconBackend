@@ -8,7 +8,6 @@ public interface IClienteRegularService {
     public List<ClienteRegular> findAll();
     public ClienteRegular findById(Long id);
     public ClienteRegular save(ClienteRegular cr);
-    public ClienteRegular update(ClienteRegular cr);
     public void deleteById(Long id);
 
 }

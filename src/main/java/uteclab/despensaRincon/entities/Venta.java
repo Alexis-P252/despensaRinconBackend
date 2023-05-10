@@ -12,6 +12,8 @@ public class Venta {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @NotEmpty
+    @Temporal(TemporalType.DATE)
+
     private Date fecha;
     private String comentario;
     private Float total;

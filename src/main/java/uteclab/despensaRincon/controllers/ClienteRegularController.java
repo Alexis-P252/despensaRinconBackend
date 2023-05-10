@@ -5,10 +5,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.entities.Aviso;
 import uteclab.despensaRincon.entities.ClienteRegular;
 import uteclab.despensaRincon.models.services.ClienteRegularService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,10 +61,10 @@ public class ClienteRegularController {
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if(newClienteR == null){
-            response.put("msj", "Hubo un problema al guardar o modificar el Cliente Regular");
+            response.put("msg", "Hubo un problema al guardar o modificar el Cliente Regular");
         }
         response.put ("msg", "Cliente Regular creado correctamente");
-        response.put("categoria", newClienteR);
+        response.put("cliente", newClienteR);
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
@@ -81,34 +85,55 @@ public class ClienteRegularController {
                 return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            response.put("msj","Cliente Regular eliminado correctamente");
+            response.put("msg","Cliente Regular eliminado correctamente");
             return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
 
         }else {
-            response.put("msj", "No existe el cliente regular con dicha ID");
+            response.put("msg", "No existe el cliente regular con dicha ID");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PutMapping("")
-    public ResponseEntity<?> update(@RequestBody ClienteRegular cr){
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@RequestBody ClienteRegular cr, BindingResult result,  @PathVariable(value="id")Long id){
 
-        Map <String,Object> response = new HashMap<>();
+        ClienteRegular actual = clienteRegularService.findById(id);
 
-        if (clienteRegularService.findById(cr.getId()) != null) {
-            try {
-                clienteRegularService.update(cr);
-            }catch (DataAccessException e){
-                response.put("msg", "Error al acceder a la base de datos");
-                response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-                return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            response.put("msj", "Cliente regular actualizado correctamente");
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-        }else{
-            response.put("msj" , "No existe el cliente regular con dicha id");
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+        Map<String,Object> response = new HashMap<>();
+
+        if(actual == null) {
+            response.put("msg","No existe un cliente regular con id = ".concat(id.toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
         }
+
+        if(result.hasErrors()){
+            List<String> errors = new ArrayList<>();
+
+            for(FieldError err: result.getFieldErrors()){
+                errors.add("En el campo: " + err.getField() + " - " +err.getDefaultMessage());
+            }
+            response.put("errors", errors);
+            response.put("msg", "Error al validar el cliente regular");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+
+        }
+
+        actual.setCedula(cr.getCedula());
+        actual.setNombre(cr.getNombre());
+        actual.setCelular(cr.getCelular());
+        actual.setCorreo(cr.getCorreo());
+        actual.setTelefono(cr.getTelefono());
+
+        try {
+            actual = clienteRegularService.save(actual);
+        }catch(DataAccessException e) {
+            response.put("msg","Error al intentar editar el cliente regular");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("msg", "Cliente regular  actualizado correctamente");
+        response.put("cliente", actual);
+        return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
     }
 
 }

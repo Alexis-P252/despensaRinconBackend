@@ -10,6 +10,5 @@ public interface IRegistroDeudaService  {
     public RegistroDeuda save (RegistroDeuda rd);
     public void deleteById (Long id);
 
-    //todo
-    // update     public RegistroDeuda update (Long id);
+
 }

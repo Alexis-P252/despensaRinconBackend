@@ -17,10 +17,6 @@ public class ClienteRegularService implements IClienteRegularService{
     public ClienteRegular findById(Long id) { return clienteRegularDao.findById(id).orElse(null); }
 
     @Override
-    public ClienteRegular update(ClienteRegular cr){
-        return clienteRegularDao.update(cr);
-    }
-    @Override
     public ClienteRegular save(ClienteRegular cr) { return clienteRegularDao.save(cr); }
     @Override
     public void deleteById(Long id) { clienteRegularDao.deleteById(id); }

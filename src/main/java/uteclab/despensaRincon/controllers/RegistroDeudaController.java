@@ -5,6 +5,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.entities.Aviso;
 import uteclab.despensaRincon.entities.RegistroDeuda;
 import uteclab.despensaRincon.models.services.RegistroDeudaService;
 
@@ -32,12 +33,12 @@ public class RegistroDeudaController {
         try {
             registroDeuda = registroDeudaService.findById(id);
         }catch (DataAccessException e){
-            response.put("msj", "Error en la BD");
+            response.put("msg", "Error en la BD");
             response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if(registroDeuda == null){
-            response.put("msj","No se a encontrado un registro de deuda con ese ID");
+            response.put("msg","No se a encontrado un registro de deuda con ese ID");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
         }
 
@@ -45,8 +46,21 @@ public class RegistroDeudaController {
     }
 
     @PostMapping("")
-    public RegistroDeuda save(RegistroDeuda rd){
-        return registroDeudaService.save(rd);
+    public ResponseEntity save(@RequestBody RegistroDeuda rd){
+
+        RegistroDeuda newRegistro =null;
+        Map <String,Object> response = new HashMap<>();
+
+        try{
+            newRegistro = registroDeudaService.save(rd);
+        } catch (DataAccessException e){
+            response.put("msg","Error al intentar actualizar o ingresar el registro de deuda");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put ("msg", "Registro creado correctamente");
+        response.put("registro", newRegistro);
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -58,13 +72,13 @@ public class RegistroDeudaController {
             try {
                 registroDeudaService.deleteById(id);
             }catch (DataAccessException e){
-                response.put("msj","No se a podido eliminar correctamente el Registro de deuda");
+                response.put("msg","No se a podido eliminar correctamente el Registro de deuda");
                 return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            response.put("msj" , "Registro de deuda eliminado correctamente");
+            response.put("msg" , "Registro de deuda eliminado correctamente");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.OK);
         }
-        response.put("msj", "No existe un registro de deuda con dicho ID");
+        response.put("msg", "No existe un registro de deuda con dicho ID");
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
     }
 
