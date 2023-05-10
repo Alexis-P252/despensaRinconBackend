@@ -24,7 +24,7 @@ public class AuthController {
     @Value("${admin.password}")
     private String password;
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = {"http://localhost:3000", "https://java-ee-frontend.vercel.app/"})
     @PostMapping("")
     public ResponseEntity<?> login(@RequestBody ObjectNode JSONObject){
 
