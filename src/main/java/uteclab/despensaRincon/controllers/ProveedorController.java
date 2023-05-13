@@ -4,18 +4,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.backoff.BackOff;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import uteclab.despensaRincon.entities.Producto;
 import uteclab.despensaRincon.entities.Proveedor;
 import uteclab.despensaRincon.entities.Vendedor;
 import uteclab.despensaRincon.models.services.ProveedorService;
+import uteclab.despensaRincon.models.services.VendedorService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.tomcat.util.buf.Ascii.parseLong;
 
 @RestController
 @RequestMapping("/dr/proveedor")
@@ -23,6 +26,9 @@ public class ProveedorController {
 
     @Autowired
     private ProveedorService proveedorService;
+    @Autowired
+    private VendedorService vendedorService;
+
     @GetMapping("")
     public List<Proveedor> findAll() {
         return proveedorService.findAll();
@@ -136,5 +142,78 @@ public class ProveedorController {
         }
 
     }
+    @PutMapping("/vendedor/{id}")
+    public ResponseEntity<?> addVendedor(@Valid @RequestBody Vendedor vendedor, BindingResult result, @PathVariable(value="id")Long id ) {
+        Proveedor proveedorActual = proveedorService.findById(id);
+        Map<String,Object> response = new HashMap<>();
+        if(proveedorActual == null) {
+            response.put("msg","No existe un proveedor con id = ".concat(id.toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
 
+        if(vendedorService.findById(vendedor.getId()) == null){
+            response.put("msg","No existe un vendedor con id = ".concat(vendedor.getId().toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        Boolean existe = false;
+        List<Vendedor> vendedoresActual = proveedorActual.getVendedores();
+        for (int i = 0; i < vendedoresActual.size(); i++) {
+            if (vendedoresActual.get(i).getId() == vendedor.getId()) {
+                existe = true;
+            }
+        }
+        if(existe){
+            response.put("msg","El proveedor ya tiene al vendedor con id = ".concat(vendedor.getId().toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        proveedorActual.getVendedores().add(vendedor);
+        try {
+            proveedorActual = proveedorService.save(proveedorActual);
+        }catch(DataAccessException e) {
+            response.put("msg","Error al intentar modificar el proveedor");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("msg", "Vendedor agregado correctamente");
+        response.put("proveedor", proveedorActual);
+        return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
+    }
+    @PutMapping("/vendedorQuitar/{id}")
+    public ResponseEntity<?> removeVendedor(@Valid @RequestBody Vendedor vendedor, BindingResult result, @PathVariable(value="id")Long id ) {
+        Proveedor proveedorActual = proveedorService.findById(id);
+        Map<String,Object> response = new HashMap<>();
+        if(proveedorActual == null) {
+            response.put("msg","No existe un proveedor con id = ".concat(id.toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        //este control creo que no es necesario
+        if(vendedorService.findById(vendedor.getId()) == null){
+            response.put("msg","No existe un vendedor con id = ".concat(vendedor.getId().toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        Boolean existe = false;
+        List<Vendedor> vendedoresActual = proveedorActual.getVendedores();
+        for (int i = 0; i < vendedoresActual.size(); i++) {
+            if (vendedoresActual.get(i).getId() == vendedor.getId()) {
+                vendedoresActual.remove(i);
+                existe = true;
+            }
+        }
+        if(!existe){
+            response.put("msg","El proveedor no tiene un vendedor con id = ".concat(vendedor.getId().toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        proveedorActual.setVendedores(vendedoresActual);
+        try {
+            proveedorActual = proveedorService.save(proveedorActual);
+        }catch(DataAccessException e) {
+            response.put("msg","Error al intentar modificar el proveedor");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("msg", "Vendedor quitado correctamente");
+        response.put("proveedor", proveedorActual);
+        return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
+    }
 }
