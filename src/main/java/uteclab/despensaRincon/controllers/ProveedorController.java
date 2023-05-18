@@ -22,6 +22,7 @@ import static org.apache.tomcat.util.buf.Ascii.parseLong;
 
 @RestController
 @RequestMapping("/dr/proveedor")
+@CrossOrigin(origins = {"http://localhost:3000", "https://java-ee-frontend.vercel.app/"})
 public class ProveedorController {
 
     @Autowired

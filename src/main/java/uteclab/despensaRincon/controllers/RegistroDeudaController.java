@@ -15,6 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("dr/registroDeuda")
+@CrossOrigin(origins = {"http://localhost:3000", "https://java-ee-frontend.vercel.app/"})
 public class RegistroDeudaController {
     @Autowired
     RegistroDeudaService registroDeudaService;
