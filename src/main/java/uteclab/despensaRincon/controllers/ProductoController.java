@@ -63,6 +63,23 @@ public class ProductoController {
         return new ResponseEntity<Producto>(pr,HttpStatus.OK);
     }
 
+    @GetMapping("buscar/{query}/{categoria}")
+    public ResponseEntity<?> buscador(@RequestParam(value = "query", required = false) String query, @RequestParam(value = "categoria", required = false) Long categoria){
+
+        // Si query es vacio o null, se traen todos los productos
+        // Si categoria es null o 0, no se filtra por ninguna categoria, de lo contrario se filtra por el id de la categoria.
+        
+        if(query==null){
+            query = "";
+        }
+        if(categoria==null){
+            categoria = 0L;
+        }
+
+        return productoService.buscador(query,categoria);
+
+    }
+
     @PostMapping("")
     public ResponseEntity<?> create(@RequestBody Producto producto)     {
         Producto newProducto =null;
