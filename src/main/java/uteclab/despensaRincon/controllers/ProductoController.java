@@ -68,7 +68,7 @@ public class ProductoController {
 
         // Si query es vacio o null, se traen todos los productos
         // Si categoria es null o 0, no se filtra por ninguna categoria, de lo contrario se filtra por el id de la categoria.
-        
+
         if(query==null){
             query = "";
         }
@@ -141,6 +141,32 @@ public class ProductoController {
         response.put("msg", "Producto actualizado correctamente");
         response.put("producto", productoActual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable(value="id") Long id) {
+
+        Map<String,Object> response = new HashMap<>();
+
+        if(productoService.findById(id) != null ){
+            try{
+                productoService.deleteById(id);
+
+            }catch(DataAccessException e){
+                response.put("msg","Hubo un error al intentar eliminar el producto");
+                response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            response.put("msg","Producto eliminado correctamente");
+            return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+
+        }else{
+            response.put("msg","Error al intentar eliminar el producto");
+            response.put("error", "No existe un producto con id = " + id);
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+
     }
 
 
