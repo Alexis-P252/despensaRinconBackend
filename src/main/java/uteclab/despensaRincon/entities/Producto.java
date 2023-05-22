@@ -1,7 +1,10 @@
 package uteclab.despensaRincon.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+
+import java.util.List;
 
 @Entity
 public class Producto {
@@ -23,8 +26,21 @@ public class Producto {
     private String imagen;
     private boolean visible;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "proveedor_id")
+    @JsonIgnore
+    private List<Proveedor> proveedores;
 
-    @ManyToOne
+    public List<Proveedor> getProveedores() {
+        return proveedores;
+    }
+
+    public void setProveedores(List<Proveedor> proveedores) {
+        this.proveedores = proveedores;
+    }
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
     public Long getId() {

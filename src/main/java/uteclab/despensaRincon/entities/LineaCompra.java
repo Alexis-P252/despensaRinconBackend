@@ -2,9 +2,13 @@ package uteclab.despensaRincon.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Data;
+
+import java.io.Serializable;
 
 @Entity
-public class LineaCompra {
+@Data
+public class LineaCompra implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -12,7 +16,8 @@ public class LineaCompra {
     private Long cantidad;
     @NotEmpty
     private Float precio;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "producto_id")
     private Producto producto;
 
     public Long getId() {

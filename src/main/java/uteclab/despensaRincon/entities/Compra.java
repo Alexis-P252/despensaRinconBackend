@@ -15,10 +15,12 @@ public class Compra {
     private Date fecha;
     private String comentario;
     private Float total;
-    @OneToMany
-    private List<LineaCompra> lineasCompra;
 
-    @ManyToOne
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "compra_id")
+    private List<LineaCompra> lineasCompra;
+    @ManyToOne (cascade=CascadeType.ALL)
+    @JoinColumn(name="proveedor_id")
     private Proveedor proveedor;
 
     public Long getId() {
