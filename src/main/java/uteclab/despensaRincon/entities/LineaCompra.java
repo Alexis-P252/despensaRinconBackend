@@ -1,5 +1,6 @@
 package uteclab.despensaRincon.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -43,6 +44,8 @@ public class LineaCompra implements Serializable {
     public void setPrecio(Float precio) {
         this.precio = precio;
     }
+
+
 
     public Producto getProducto() {
         return producto;

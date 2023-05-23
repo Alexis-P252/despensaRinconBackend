@@ -91,10 +91,7 @@ public class CompraController {
                                 response.put("msg", "Cantidad no puede ser 0");
                                 return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
                             }
-                            if(compra.getLineasCompra().get(i).getPrecio()<=0){
-                                response.put("msg", "Precio no puede ser 0");
-                                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-                            }
+
                         compra.getLineasCompra().get(i).setProducto(producto);
                         }
                     }
@@ -145,7 +142,7 @@ public class CompraController {
                 return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            response.put("msg","Aviso eliminado correctamente");
+            response.put("msg","Compra eliminado correctamente");
             return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
 
     }

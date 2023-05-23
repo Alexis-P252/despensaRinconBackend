@@ -31,8 +31,8 @@ public class CompraService implements ICompraService {
     public Compra save(Compra compra) {
         Float total=0F;
         for(LineaCompra lc: compra.getLineasCompra()){
+            lc.setPrecio(lc.getProducto().getPrecio_compra() * lc.getCantidad());
             lc.getProducto().setStock(lc.getProducto().getStock()+lc.getCantidad());
-            lc.getProducto().setPrecio_compra(lc.getPrecio());
             Boolean existe=false;
             for(Proveedor prv: lc.getProducto().getProveedores()){
                 if (prv.getId()==compra.getProveedor().getId()){
@@ -42,7 +42,7 @@ public class CompraService implements ICompraService {
             if (!existe){
                 lc.getProducto().getProveedores().add(compra.getProveedor());
             }
-            total= total + lc.getPrecio() * lc.getCantidad();
+            total= total + lc.getPrecio();
         }
         compra.setTotal(total);
         return compraDao.save(compra);
