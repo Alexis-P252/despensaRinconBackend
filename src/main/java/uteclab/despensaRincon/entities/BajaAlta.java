@@ -9,13 +9,13 @@ public class BajaAlta {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Boolean alta;
-    //si es alta true y false baja;
 
     @Temporal(TemporalType.DATE)
     private Date fecha;
     private String motivo;
     private Long cantidad;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="producto_id")
     private Producto producto;
 
     public Long getId() {

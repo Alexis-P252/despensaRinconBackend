@@ -15,10 +15,10 @@ public class Proveedor {
     private String direccion;
 
     private String  correo;
-    @Column(nullable = true)
-    private String imagen;
     @ManyToMany
     private List<Vendedor> vendedores;
+    @Column(nullable = true)
+    private String imagen;
 
     public Long getId() {
         return id;
@@ -59,7 +59,6 @@ public class Proveedor {
     public void setImagen(String imagen) {
         this.imagen = imagen;
     }
-
     public List<Vendedor> getVendedores() {
         return vendedores;
     }
@@ -67,4 +66,5 @@ public class Proveedor {
     public void setVendedores(List<Vendedor> vendedores) {
         this.vendedores = vendedores;
     }
+
 }

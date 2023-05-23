@@ -17,6 +17,9 @@ public class Pedido {
     @ManyToOne
     private ClienteRegular cliente;
 
+    @OneToMany
+    private List<Producto> productos;
+
     public Long getId() {
         return id;
     }
