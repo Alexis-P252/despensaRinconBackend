@@ -22,7 +22,6 @@ public class Venta {
     private List<LineaVenta> lineasVenta;
   //  @Column(nullable = true)
     @ManyToOne
-
     private ClienteRegular cliente;
 
     public Long getId() {

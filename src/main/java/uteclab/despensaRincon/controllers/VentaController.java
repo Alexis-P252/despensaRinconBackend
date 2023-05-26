@@ -1,5 +1,6 @@
 package uteclab.despensaRincon.controllers;
 
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.entities.Compra;
+import uteclab.despensaRincon.entities.LineaCompra;
+import uteclab.despensaRincon.entities.Producto;
 import uteclab.despensaRincon.entities.Venta;
 import uteclab.despensaRincon.exceptions.StockInsuficienteException;
 import uteclab.despensaRincon.models.services.IVentaService;
@@ -90,6 +94,31 @@ public class VentaController {
         return new ResponseEntity<Map<String,Object>>( response, HttpStatus.CREATED);
 
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable(value="id") Long id){
+        Map<String, Object> response = new HashMap<>();
+        Venta venta = ventaService.findById(id);
+        if(venta ==null){
+
+            response.put("msg","Hubo un error al intentar eliminar la venta");
+            response.put("error","No existe venta con ese id");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            ventaService.deleteById(id);
+        }catch(DataAccessException e){
+            response.put("msg","Hubo un error al intentar eliminar la venta");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        response.put("msg","Venta eliminada correctamente");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+    }
+
+
 
 
 }

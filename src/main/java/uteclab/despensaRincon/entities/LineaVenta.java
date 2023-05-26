@@ -12,7 +12,7 @@ public class LineaVenta {
     private Long cantidad;
     @NotEmpty
     private Float precio;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Producto producto;
 
     public Long getId() {
