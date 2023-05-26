@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uteclab.despensaRincon.utils.JWTUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody ObjectNode JSONObject){
 
         Map<String, Object> response = new HashMap<>();
+        ArrayList<String> error = new ArrayList<>();
 
         String user = null;
         String pass = null;
@@ -51,7 +53,8 @@ public class AuthController {
         }
         else{
             response.put("msg", "No se pudo crear la sesion");
-            response.put("error", "Credenciales invalidas");
+            error.add("Credenciales invalidas");
+            response.put("error", error);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
         }
     }

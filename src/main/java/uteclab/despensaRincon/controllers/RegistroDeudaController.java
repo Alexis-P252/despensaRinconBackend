@@ -9,6 +9,7 @@ import uteclab.despensaRincon.entities.Aviso;
 import uteclab.despensaRincon.entities.RegistroDeuda;
 import uteclab.despensaRincon.models.services.RegistroDeudaService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +31,14 @@ public class RegistroDeudaController {
 
         RegistroDeuda registroDeuda = null;
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         try {
             registroDeuda = registroDeudaService.findById(id);
         }catch (DataAccessException e){
             response.put("msg", "Error en la BD");
-            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put ("error",error);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if(registroDeuda == null){
@@ -51,12 +54,14 @@ public class RegistroDeudaController {
 
         RegistroDeuda newRegistro =null;
         Map <String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         try{
             newRegistro = registroDeudaService.save(rd);
         } catch (DataAccessException e){
             response.put("msg","Error al intentar actualizar o ingresar el registro de deuda");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put ("msg", "Registro creado correctamente");
@@ -73,7 +78,7 @@ public class RegistroDeudaController {
             try {
                 registroDeudaService.deleteById(id);
             }catch (DataAccessException e){
-                response.put("msg","No se a podido eliminar correctamente el Registro de deuda");
+                response.put("msg","No se ha podido eliminar correctamente el Registro de deuda");
                 return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
             response.put("msg" , "Registro de deuda eliminado correctamente");

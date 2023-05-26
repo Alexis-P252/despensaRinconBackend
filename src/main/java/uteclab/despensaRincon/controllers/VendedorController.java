@@ -32,11 +32,13 @@ public class VendedorController {
 
         Vendedor ve = null;
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
         try {
             ve=vendedorService.findById(id);
         }catch (DataAccessException e){
             response.put ("msg","Error al acceder a la base de datos");
-            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put ("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (ve==null){
@@ -49,6 +51,7 @@ public class VendedorController {
     public ResponseEntity<?> create(@RequestBody Vendedor vendedor)     {
         Vendedor newVendedor =null;
         Map <String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         if(!vendedor.getTelefono().matches("^\\+?[0-9]{8,}$")){
             response.put("msg", "El telefono ingresado no tiene un formato valido");
@@ -64,7 +67,8 @@ public class VendedorController {
             newVendedor = vendedorService.save(vendedor);
         } catch (DataAccessException e){
             response.put("msg","Error al intentar ingresar el Vendedor");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put ("msg", "Datos del Vendedor ingresados correctamente");
@@ -76,6 +80,7 @@ public class VendedorController {
         Vendedor vendedorActual = vendedorService.findById(id);
 
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         if(vendedorActual == null) {
             response.put("msg","No existe un vendedor con id = ".concat(id.toString()));
@@ -98,7 +103,7 @@ public class VendedorController {
             for(FieldError err: result.getFieldErrors()){
                 errors.add("In the field: " + err.getField() + " - " +err.getDefaultMessage());
             }
-            response.put("errors", errors);
+            response.put("error", errors);
             response.put("msg", "Error al validar el vendedor");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
 
@@ -111,7 +116,8 @@ public class VendedorController {
             vendedorActual = vendedorService.save(vendedorActual);
         }catch(DataAccessException e) {
             response.put("msg","Error al intentar modificar el vendedor");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("msg", "Producto actualizado correctamente");

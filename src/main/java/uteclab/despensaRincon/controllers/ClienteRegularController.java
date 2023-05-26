@@ -34,11 +34,13 @@ public class ClienteRegularController {
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         ClienteRegular cr = null;
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
             try {
                 cr = clienteRegularService.findById(id);
             }catch (DataAccessException e){
                 response.put ("msg","Error al acceder a la base de datos");
-                response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                response.put ("error",error);
                 return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
             if(cr == null){
@@ -53,12 +55,14 @@ public class ClienteRegularController {
     public ResponseEntity<?> create(@RequestBody ClienteRegular clienteR){
         ClienteRegular newClienteR = null;
         Map <String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         try {
             newClienteR = clienteRegularService.save(clienteR);
         }catch (DataAccessException e){
             response.put("msg", "Error al acceder a la base de datos");
-            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put ("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if(newClienteR == null){
@@ -75,6 +79,7 @@ public class ClienteRegularController {
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id){
 
         Map <String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         if  (clienteRegularService.findById(id) != null){
             try {
@@ -82,7 +87,8 @@ public class ClienteRegularController {
 
             }catch (DataAccessException e){
                 response.put("msg", "Error al acceder a la base de datos");
-                response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                response.put ("error",error);
                 return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
@@ -101,6 +107,7 @@ public class ClienteRegularController {
         ClienteRegular actual = clienteRegularService.findById(id);
 
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         if(actual == null) {
             response.put("msg","No existe un cliente regular con id = ".concat(id.toString()));
@@ -113,7 +120,7 @@ public class ClienteRegularController {
             for(FieldError err: result.getFieldErrors()){
                 errors.add("En el campo: " + err.getField() + " - " +err.getDefaultMessage());
             }
-            response.put("errors", errors);
+            response.put("error", errors);
             response.put("msg", "Error al validar el cliente regular");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
 
@@ -129,7 +136,8 @@ public class ClienteRegularController {
             actual = clienteRegularService.save(actual);
         }catch(DataAccessException e) {
             response.put("msg","Error al intentar editar el cliente regular");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("msg", "Cliente regular  actualizado correctamente");

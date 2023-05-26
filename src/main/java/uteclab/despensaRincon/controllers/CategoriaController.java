@@ -30,11 +30,14 @@ public class CategoriaController {
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         Categoria ca = null;
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+
         try {
             ca=categoriaService.findById(id);
         }catch (DataAccessException e){
             response.put ("msg","Error al acceder a la base de datos");
-            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put ("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (ca==null){
@@ -47,12 +50,14 @@ public class CategoriaController {
     public ResponseEntity<?> create(@RequestBody Categoria categoria)     {
         Categoria newCategoria =null;
         Map <String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         try{
             newCategoria = categoriaService.save(categoria);
         } catch (DataAccessException e){
             response.put("msg","Error al intentar actualizar o ingresar la Categoria");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put ("msg", "Categoria creada correctamente");
@@ -66,7 +71,7 @@ public class CategoriaController {
         Categoria categoriaActual = categoriaService.findById(id);
 
         Map<String,Object> response = new HashMap<>();
-
+        List<String> error = new ArrayList<>();
         if(categoriaActual == null) {
             response.put("msg","No existe una categoria con id = ".concat(id.toString()));
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
@@ -91,10 +96,11 @@ public class CategoriaController {
             categoriaActual = categoriaService.save(categoriaActual);
         }catch(DataAccessException e) {
             response.put("msg","Error al intentar editar la categoria");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put("msg", "Category actualizada correctamente");
+        response.put("msg", "Categoria actualizada correctamente");
         response.put("categoria", categoriaActual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
     }
@@ -103,6 +109,7 @@ public class CategoriaController {
     public ResponseEntity<?> delete(@PathVariable(value="id") Long id) {
 
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         if(categoriaService.findById(id) != null ){
             try{
@@ -110,7 +117,8 @@ public class CategoriaController {
 
             }catch(DataAccessException e){
                 response.put("msg","Hubo un error al intentar eliminar la categoria");
-                response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                response.put("error", error);
                 return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
@@ -119,7 +127,9 @@ public class CategoriaController {
 
         }else{
             response.put("msg","Error tal intentar eliminar la categoria");
-            response.put("error", "No existe una categoria con id = " + id);
+            error.add("No existe una categoria con id = "+ id);
+
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
 

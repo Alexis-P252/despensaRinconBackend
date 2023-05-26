@@ -14,6 +14,7 @@ import uteclab.despensaRincon.models.services.ProductoService;
 import uteclab.despensaRincon.models.services.ProveedorService;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +40,14 @@ public class CompraController {
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         Compra compra = null;
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+
         try {
             compra = compraService.findById(id);
         }catch (DataAccessException e){
             response.put ("msg","Error al acceder a la base de datos");
-            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put ("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (compra==null){
@@ -57,6 +61,8 @@ public class CompraController {
     public ResponseEntity<?> create(@RequestBody Compra compra){
         Compra compraNew = null;
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+
         Proveedor proveedor =null;
         if (compra.getProveedor()==null){
             response.put("msg","No se selecciono un proveedor");
@@ -102,7 +108,8 @@ public class CompraController {
             compraNew = compraService.save(compra);
         }catch (DataAccessException e){
             response.put ("msg","Error al acceder a la base de datos");
-            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put ("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("msg","Compra creada con exito");
@@ -112,11 +119,13 @@ public class CompraController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(value="id") Long id) {
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
         Compra compra = compraService.findById(id);
         if(compra ==null){
 
             response.put("msg","Hubo un error al intentar eliminar el compra");
-            response.put("error","No existe compra con ese id");
+            error.add("No existe una compra con ese id");
+            response.put("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
         }
         if (compra.getLineasCompra().size()>0) {
@@ -125,7 +134,8 @@ public class CompraController {
                 if (producto != null) {
                     if ((producto.getStock() - lc.getCantidad()) < 0) {
                         response.put("msg", "Hubo un error al intentar eliminar el compra");
-                        response.put("error", "No se puede eliminar producto el " + lc.getProducto().getNombre() + " queda en menor a 0");
+                        error.add("No se puede eliminar el producto".concat(lc.getProducto().getNombre()).concat(" ya que su stock queda negativo"));
+                        response.put("error", error);
                         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
                     } else {
                         producto.setStock(producto.getStock() - lc.getCantidad());
@@ -138,7 +148,8 @@ public class CompraController {
                 compraService.deleteByObject(compra);
             }catch(DataAccessException e){
                 response.put("msg","Hubo un error al intentar eliminar el compra");
-                response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                response.put("error", error);
                 return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
