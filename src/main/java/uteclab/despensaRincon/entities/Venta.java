@@ -18,7 +18,7 @@ public class Venta {
     private String comentario;
     private Float total;
     private Float montoDeuda;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LineaVenta> lineasVenta;
   //  @Column(nullable = true)
     @ManyToOne

@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/dr/aviso")
-@CrossOrigin(origins = {"http://localhost:3000", "https://java-ee-frontend.vercel.app/"})
+@CrossOrigin(origins = "*")
 public class AvisoController {
 
     @Autowired
