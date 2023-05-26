@@ -32,11 +32,13 @@ public class AvisoController {
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         Aviso aviso = null;
         Map<String, Object> response = new HashMap<>();
+        ArrayList<String> error = new ArrayList<>();
         try {
             aviso = avisoService.findById(id);
         }catch (DataAccessException e){
             response.put ("msg","Error al acceder a la base de datos");
-            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put ("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (aviso==null){
@@ -49,12 +51,14 @@ public class AvisoController {
     public ResponseEntity<?> create(@RequestBody Aviso aviso)     {
         Aviso newAviso =null;
         Map <String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         try{
             newAviso = avisoService.save(aviso);
         } catch (DataAccessException e){
             response.put("msg","Error al intentar actualizar o ingresar el aviso");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put ("msg", "Aviso creado correctamente");
@@ -68,6 +72,7 @@ public class AvisoController {
         Aviso avisoActual = avisoService.findById(id);
 
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         if(avisoActual == null) {
             response.put("msg","No existe un aviso con id = ".concat(id.toString()));
@@ -80,7 +85,7 @@ public class AvisoController {
             for(FieldError err: result.getFieldErrors()){
                 errors.add("En el campo: " + err.getField() + " - " +err.getDefaultMessage());
             }
-            response.put("errors", errors);
+            response.put("error", errors);
             response.put("msg", "Error al validar el aviso");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
 
@@ -93,7 +98,8 @@ public class AvisoController {
             avisoActual = avisoService.save(avisoActual);
         }catch(DataAccessException e) {
             response.put("msg","Error al intentar editar el aviso");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("msg", "Aviso actualizado correctamente");
@@ -105,6 +111,8 @@ public class AvisoController {
     public ResponseEntity<?> delete(@PathVariable(value="id") Long id) {
 
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+
 
         if(avisoService.findById(id) != null ){
             try{
@@ -112,7 +120,8 @@ public class AvisoController {
 
             }catch(DataAccessException e){
                 response.put("msg","Hubo un error al intentar eliminar el aviso");
-                response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                response.put("error", error);
                 return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
@@ -121,7 +130,8 @@ public class AvisoController {
 
         }else{
             response.put("msg","Error al intentar eliminar el aviso");
-            response.put("error", "No existe un aviso con id = " + id);
+            error.add("No existe un aviso con id = " + id);
+            response.put("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
 

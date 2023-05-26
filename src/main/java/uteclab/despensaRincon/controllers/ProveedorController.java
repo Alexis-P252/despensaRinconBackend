@@ -39,11 +39,13 @@ public class ProveedorController {
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         Proveedor proveedor = null;
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
         try {
             proveedor = proveedorService.findById(id);
         }catch (DataAccessException e){
             response.put ("msg","Error al acceder a la base de datos");
-            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put ("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (proveedor==null){
@@ -56,6 +58,7 @@ public class ProveedorController {
     public ResponseEntity<?> create(@RequestBody Proveedor proveedor)     {
         Proveedor newProveedor =null;
         Map <String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
         if(!proveedor.getCorreo().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")){
             response.put("msg", "El correo ingresado no tiene un formato valido");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
@@ -65,7 +68,8 @@ public class ProveedorController {
             newProveedor = proveedorService.save(proveedor);
         } catch (DataAccessException e){
             response.put("msg","Error al intentar ingresar el Proveedor");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put ("msg", "Datos del Proveeedor ingresados correctamente");
@@ -79,6 +83,7 @@ public class ProveedorController {
         Proveedor proveedorActual = proveedorService.findById(id);
 
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         if(proveedorActual == null) {
             response.put("msg","No existe un proveedor con id = ".concat(id.toString()));
@@ -91,7 +96,7 @@ public class ProveedorController {
             for(FieldError err: result.getFieldErrors()){
                 errors.add("In the field: " + err.getField() + " - " +err.getDefaultMessage());
             }
-            response.put("errors", errors);
+            response.put("error", errors);
             response.put("msg", "Error al validar el proveedor");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
 
@@ -111,7 +116,8 @@ public class ProveedorController {
             proveedorActual = proveedorService.save(proveedorActual);
         }catch(DataAccessException e) {
             response.put("msg","Error al intentar modificar el proveedor");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("msg", "Proveedor actualizado correctamente");
@@ -122,6 +128,7 @@ public class ProveedorController {
     public ResponseEntity<?> delete(@PathVariable(value="id") Long id) {
 
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         if(proveedorService.findById(id) != null ){
             try{
@@ -129,7 +136,8 @@ public class ProveedorController {
 
             }catch(DataAccessException e){
                 response.put("msg","Hubo un error al intentar eliminar la proveedor");
-                response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                response.put("error", error);
                 return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
@@ -138,7 +146,8 @@ public class ProveedorController {
 
         }else{
             response.put("msg","Error tal intentar eliminar al proveedor");
-            response.put("error", "No existe un proveedor con id = " + id);
+            error.add("No existe un proveedor con id =" + id);
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
 
@@ -147,6 +156,7 @@ public class ProveedorController {
     public ResponseEntity<?> addVendedor(@Valid @RequestBody Vendedor vendedor, BindingResult result, @PathVariable(value="id")Long id ) {
         Proveedor proveedorActual = proveedorService.findById(id);
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
         if(proveedorActual == null) {
             response.put("msg","No existe un proveedor con id = ".concat(id.toString()));
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
@@ -173,7 +183,8 @@ public class ProveedorController {
             proveedorActual = proveedorService.save(proveedorActual);
         }catch(DataAccessException e) {
             response.put("msg","Error al intentar modificar el proveedor");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("msg", "Vendedor agregado correctamente");
@@ -184,6 +195,7 @@ public class ProveedorController {
     public ResponseEntity<?> removeVendedor(@Valid @RequestBody Vendedor vendedor, BindingResult result, @PathVariable(value="id")Long id ) {
         Proveedor proveedorActual = proveedorService.findById(id);
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
         if(proveedorActual == null) {
             response.put("msg","No existe un proveedor con id = ".concat(id.toString()));
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
@@ -210,7 +222,8 @@ public class ProveedorController {
             proveedorActual = proveedorService.save(proveedorActual);
         }catch(DataAccessException e) {
             response.put("msg","Error al intentar modificar el proveedor");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("msg", "Vendedor quitado correctamente");

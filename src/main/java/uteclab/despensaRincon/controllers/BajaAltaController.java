@@ -11,6 +11,7 @@ import uteclab.despensaRincon.entities.Producto;
 import uteclab.despensaRincon.models.services.BajaAltaService;
 import uteclab.despensaRincon.models.services.ProductoService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +31,14 @@ public class BajaAltaController {
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         BajaAlta ba = null;
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+
         try {
             ba=bajaAltaService.findById(id);
         }catch (DataAccessException e){
             response.put ("msg","Error al acceder a la base de datos");
-            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put ("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (ba==null){
@@ -46,6 +50,8 @@ public class BajaAltaController {
     @PostMapping("")
     public ResponseEntity<?> create(@RequestBody BajaAlta bajaAlta)     {
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+
         Producto producto = productoService.findById(bajaAlta.getProducto().getId());
         if(bajaAlta.getCantidad()<=0){
             response.put("msg","Se debe ingresar un valor mayor a 0");
@@ -69,7 +75,8 @@ public class BajaAltaController {
             bajaAltaService.save(bajaAlta);
         }catch (DataAccessException e){
             response.put ("msg","Error al acceder a la base de datos");
-            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put ("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("msg","Baja o Alta creada con exito");
@@ -81,6 +88,8 @@ public class BajaAltaController {
     public ResponseEntity<?> delete(@PathVariable(value="id") Long id) {
         BajaAlta bajaAlta = bajaAltaService.findById(id);
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+
         String queEs ="";
         if(bajaAlta==null){
             response.put("msg","No existe baja o alta con ese id");
@@ -99,7 +108,8 @@ public class BajaAltaController {
             bajaAltaService.deleteByObject (bajaAlta);
         }catch(DataAccessException e){
             response.put("msg","Hubo un error al intentar eliminar la "+queEs+"");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

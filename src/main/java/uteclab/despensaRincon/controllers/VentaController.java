@@ -39,12 +39,14 @@ public class VentaController {
 
         Venta venta = null;
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         try{
             venta = ventaService.findById(id);
         } catch (DataAccessException e){
             response.put("msg", "Error al acceder a la base de datos");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -61,6 +63,7 @@ public class VentaController {
 
         Venta nuevaVenta = null;
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         if(result.hasErrors()){
             List<String> errors = new ArrayList<>();
@@ -68,7 +71,7 @@ public class VentaController {
             for(FieldError err: result.getFieldErrors()){
                 errors.add("En el campo: " + err.getField() + " - " +err.getDefaultMessage());
             }
-            response.put("errors", errors);
+            response.put("error", errors);
             response.put("msg", "Error al validar la venta");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
@@ -77,7 +80,8 @@ public class VentaController {
             nuevaVenta = ventaService.save(venta);
         }catch(DataAccessException | StockInsuficienteException e ){
             response.put("msg", "Error al intentar insertar la nueva venta");
-            response.put("error", e.getMessage());
+            error.add(e.getMessage());
+            response.put("error", error);
 
             if(e instanceof  StockInsuficienteException){
                 return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
@@ -98,11 +102,13 @@ public class VentaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(value="id") Long id){
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
         Venta venta = ventaService.findById(id);
         if(venta ==null){
 
             response.put("msg","Hubo un error al intentar eliminar la venta");
-            response.put("error","No existe venta con ese id");
+            error.add("No existe venta con ese id");
+            response.put("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
         }
 
@@ -110,7 +116,8 @@ public class VentaController {
             ventaService.deleteById(id);
         }catch(DataAccessException e){
             response.put("msg","Hubo un error al intentar eliminar la venta");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

@@ -32,11 +32,14 @@ public class ProductoController {
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         Producto pr = null;
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+
         try {
             pr=productoService.findById(id);
         }catch (DataAccessException e){
             response.put ("msg","Error al acceder a la base de datos");
-            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put ("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (pr==null){
@@ -49,11 +52,13 @@ public class ProductoController {
     public ResponseEntity<?> findByNombre(@PathVariable(value="nombre") String nombre){
         Producto pr = null;
         Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
         try {
             pr=productoService.findByNombre(nombre);
         }catch (DataAccessException e){
             response.put ("msg","Error al acceder a la base de datos");
-            response.put ("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put ("error",error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (pr==null){
@@ -84,12 +89,14 @@ public class ProductoController {
     public ResponseEntity<?> create(@RequestBody Producto producto)     {
         Producto newProducto =null;
         Map <String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         try{
             newProducto = productoService.save(producto);
         } catch (DataAccessException e){
             response.put("msg","Error al intentar actualizar o ingresar el Producto");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put ("msg", "Datos del Producto ingresados correctamente");
@@ -103,6 +110,7 @@ public class ProductoController {
         Producto productoActual = productoService.findById(id);
 
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         if(productoActual == null) {
             response.put("msg","No existe un producto con id = ".concat(id.toString()));
@@ -115,7 +123,7 @@ public class ProductoController {
             for(FieldError err: result.getFieldErrors()){
                 errors.add("In the field: " + err.getField() + " - " +err.getDefaultMessage());
             }
-            response.put("errors", errors);
+            response.put("error", errors);
             response.put("msg", "Error al validar el producto");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
 
@@ -135,7 +143,8 @@ public class ProductoController {
             productoActual = productoService.save(productoActual);
         }catch(DataAccessException e) {
             response.put("msg","Error al intentar modificar el producto");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("msg", "Producto actualizado correctamente");
@@ -147,6 +156,7 @@ public class ProductoController {
     public ResponseEntity<?> delete(@PathVariable(value="id") Long id) {
 
         Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
         if(productoService.findById(id) != null ){
             try{
@@ -154,7 +164,8 @@ public class ProductoController {
 
             }catch(DataAccessException e){
                 response.put("msg","Hubo un error al intentar eliminar el producto");
-                response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                response.put("error", error);
                 return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
@@ -163,7 +174,8 @@ public class ProductoController {
 
         }else{
             response.put("msg","Error al intentar eliminar el producto");
-            response.put("error", "No existe un producto con id = " + id);
+            error.add("No existe un producto con id = " + id );
+            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
 
