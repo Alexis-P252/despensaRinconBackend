@@ -72,6 +72,11 @@
 			<version>2.3.0</version>
 		</dependency>
 
+		<dependency> <!-- Libreria para el envio de mails -->
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 
 	</dependencies>
 
