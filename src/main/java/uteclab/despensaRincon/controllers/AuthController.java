@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.models.services.EmailService;
 import uteclab.despensaRincon.utils.JWTUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -18,6 +20,9 @@ public class AuthController {
 
     @Autowired
     private JWTUtil jwtUtil;
+
+    @Autowired
+    private EmailService emailService;
 
     @Value("${admin.username}")
     private String usuario;
@@ -58,6 +63,24 @@ public class AuthController {
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
         }
     }
+
+    /*@GetMapping("prueba")
+    public ResponseEntity<?> pruebaEmail(){
+
+        List<String> destinatarios = new ArrayList();
+        destinatarios.add("aleperalta252@gmail.com");
+        destinatarios.add("alexis.peralta@estudiantes.utec.edu.uy");
+
+        String titulo = "Esto es una prueba";
+
+        String contenido = "Prueba de envio de mails";
+
+
+       String res = emailService.mandarEmail(destinatarios.toArray(new String[0]), titulo,contenido);
+       return new ResponseEntity<String>(res, HttpStatus.OK);
+    }
+    */
+
 
     
 
