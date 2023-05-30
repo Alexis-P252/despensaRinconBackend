@@ -17,6 +17,11 @@ public class ClienteRegularService implements IClienteRegularService{
     public ClienteRegular findById(Long id) { return clienteRegularDao.findById(id).orElse(null); }
 
     @Override
+    public ClienteRegular findByCedula(String cedula) {
+        return clienteRegularDao.findByCedula(cedula).orElse(null);
+    }
+
+    @Override
     public ClienteRegular save(ClienteRegular cr) { return clienteRegularDao.save(cr); }
     @Override
     public void deleteById(Long id) { clienteRegularDao.deleteById(id); }
