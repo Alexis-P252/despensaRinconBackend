@@ -57,6 +57,13 @@ public class ClienteRegularController {
         Map <String,Object> response = new HashMap<>();
         List<String> error = new ArrayList<>();
 
+        if(clienteRegularService.findByCedula(clienteR.getCedula()) != null){
+            response.put("msg", "Hubo un erro al intentar registrar el nuevo cliente");
+            error.add("Ya existe un cliente registrado con la cedula " + clienteR.getCedula());
+            response.put ("error",error);
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+
         try {
             newClienteR = clienteRegularService.save(clienteR);
         }catch (DataAccessException e){
