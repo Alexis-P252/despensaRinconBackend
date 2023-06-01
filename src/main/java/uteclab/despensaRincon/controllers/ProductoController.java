@@ -28,6 +28,12 @@ public class ProductoController {
     public List<Producto> findAll() {
         return productoService.findAll();
     }
+
+    @GetMapping("/bajoStock")
+    public List<Producto> findBajoStock(){
+        return productoService.findBajoStock();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         Producto pr = null;
@@ -68,8 +74,8 @@ public class ProductoController {
         return new ResponseEntity<Producto>(pr,HttpStatus.OK);
     }
 
-    @GetMapping("buscar/{query}/{categoria}")
-    public ResponseEntity<?> buscador(@RequestParam(value = "query", required = false) String query, @RequestParam(value = "categoria", required = false) Long categoria){
+    @GetMapping("buscar/{query}/{categoria}/{soloVisible}")
+    public ResponseEntity<?> buscador(@RequestParam(value = "query", required = false) String query, @RequestParam(value = "categoria", required = false) Long categoria, @RequestParam(value="soloVisible", required=false) Boolean visible){
 
         // Si query es vacio o null, se traen todos los productos
         // Si categoria es null o 0, no se filtra por ninguna categoria, de lo contrario se filtra por el id de la categoria.
@@ -81,7 +87,11 @@ public class ProductoController {
             categoria = 0L;
         }
 
-        return productoService.buscador(query,categoria);
+        if(visible == null){
+            visible = false;
+        }
+
+        return productoService.buscador(query,categoria, visible);
 
     }
 

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductoService implements IProductoService {
@@ -26,6 +27,11 @@ public class ProductoService implements IProductoService {
     @Override
     public List<Producto> findAll() {
         return (List<Producto>) productoDao.findAll();
+    }
+
+    @Override
+    public List<Producto> findBajoStock() {
+        return productoDao.findBajoStock();
     }
 
     @Override
@@ -54,7 +60,7 @@ public class ProductoService implements IProductoService {
     }
 
     @Override
-    public ResponseEntity<?> buscador(String query, Long categoria_id){
+    public ResponseEntity<?> buscador(String query, Long categoria_id, Boolean visible){
 
         Map<String, Object> map = new HashMap<>();
 
@@ -63,12 +69,20 @@ public class ProductoService implements IProductoService {
 
                 List<Producto> res = this.findAll();
 
+                if (visible) {
+                    res.removeIf(producto -> !producto.isVisible());
+                }
+
                 map.put("productos", res);
                 map.put("msg", "Se han encontrado " + res.size() + " productos");
                 return new ResponseEntity<Map<String,Object>>(map,HttpStatus.OK);
             }
             else{
                 List<Producto> res = this.buscadorNombre(query);
+
+                if (visible) {
+                    res.removeIf(producto -> !producto.isVisible());
+                }
 
                 map.put("productos", res);
                 map.put("msg", "Se han encontrado " + res.size() + " productos");
@@ -91,8 +105,15 @@ public class ProductoService implements IProductoService {
             else{
 
                 if(query.isBlank() || query.isEmpty()){
-                    map.put("productos", c.getProductos());
-                    map.put("msg", "Se han encontrado " + c.getProductos().size() + " productos");
+
+                    List<Producto> productos = c.getProductos();
+
+                    if (visible) {
+                        productos.removeIf(producto -> !producto.isVisible());
+                    }
+
+                    map.put("productos", productos);
+                    map.put("msg", "Se han encontrado " + productos.size() + " productos");
                     return new ResponseEntity<Map<String,Object>>(map,HttpStatus.OK);
                 }
                 else{
@@ -103,6 +124,10 @@ public class ProductoService implements IProductoService {
                         if(p.getNombre().toLowerCase().contains(query.toLowerCase())){
                             res.add(p);
                         }
+                    }
+
+                    if (visible) {
+                        productos.removeIf(producto -> !producto.isVisible());
                     }
 
                     map.put("productos", res);
