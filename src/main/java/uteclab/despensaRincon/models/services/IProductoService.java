@@ -10,6 +10,8 @@ import java.util.Map;
 public interface IProductoService {
     public List<Producto> findAll();
     //// aca tengo una duda
+
+    public List<Producto> findBajoStock();
     public Producto findById(Long id);
     public Producto findByNombre(String nombre);
 
@@ -18,5 +20,5 @@ public interface IProductoService {
     public Producto save (Producto em);
     public void deleteById (Long id);
 
-    public ResponseEntity<?> buscador(String query, Long categoria_id);
+    public ResponseEntity<?> buscador(String query, Long categoria_id, Boolean visible);
 }
