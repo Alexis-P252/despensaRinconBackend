@@ -3,6 +3,8 @@ package uteclab.despensaRincon.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ public class Categoria {
     private Long id;
 
     @NotEmpty
+    @Column(unique = true)
+    @Size(min = 4, max = 35)
     private String nombre;
 
     @JsonIgnore

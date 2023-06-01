@@ -1,5 +1,6 @@
 package uteclab.despensaRincon.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -50,9 +51,23 @@ public class ClienteRegularController {
         return new ResponseEntity<ClienteRegular>(cr,HttpStatus.OK);
 
     }
+/*
+ public ResponseEntity<?> create(@Valid @RequestBody Categoria categoria, BindingResult result)     {
+        Categoria newCategoria =null;
+        Map <String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
 
+        if(result.hasErrors()){
+            for(FieldError err: result.getFieldErrors()){
+                error.add("En el campo: " + err.getField() + " " +err.getDefaultMessage());
+            }
+            response.put("error", error);
+            response.put("msg", "Error al validar el aviso");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+ */
     @PostMapping("")
-    public ResponseEntity<?> create(@RequestBody ClienteRegular clienteR){
+    public ResponseEntity<?> create(@Valid @RequestBody ClienteRegular clienteR, BindingResult result){
         ClienteRegular newClienteR = null;
         Map <String,Object> response = new HashMap<>();
         List<String> error = new ArrayList<>();
@@ -64,6 +79,14 @@ public class ClienteRegularController {
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
 
+        if(result.hasErrors()){
+            for(FieldError err: result.getFieldErrors()){
+                error.add("En el campo " + err.getField() + " " +err.getDefaultMessage());
+            }
+            response.put("error", error);
+            response.put("msg", "Error al validar el Cliente Regular");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
         try {
             newClienteR = clienteRegularService.save(clienteR);
         }catch (DataAccessException e){

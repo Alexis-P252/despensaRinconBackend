@@ -1,9 +1,12 @@
 package uteclab.despensaRincon.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import uteclab.despensaRincon.entities.Aviso;
 import uteclab.despensaRincon.entities.BajaAlta;
@@ -48,25 +51,30 @@ public class BajaAltaController {
         return new ResponseEntity<BajaAlta>(ba,HttpStatus.OK);
     }
     @PostMapping("")
-    public ResponseEntity<?> create(@RequestBody BajaAlta bajaAlta)     {
+
+    public ResponseEntity<?> create(@Valid @RequestBody BajaAlta bajaAlta, BindingResult result)     {
         Map<String, Object> response = new HashMap<>();
         List<String> error = new ArrayList<>();
-
+        if(result.hasErrors()){
+            for(FieldError err: result.getFieldErrors())
+                error.add("En el campo " + err.getField() + " " + err.getDefaultMessage());
+            response.put("error", error);
+            response.put("msg", "Error al validar la Baja o Alta");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+        if(bajaAlta.getProducto().getId()==null || productoService.findById(bajaAlta.getProducto().getId()) ==null){
+            response.put("error","No se encontro producto con ese Id");
+            response.put("msg", "Error al validar la Baja o Alta");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
         Producto producto = productoService.findById(bajaAlta.getProducto().getId());
-        if(bajaAlta.getCantidad()<=0){
-            response.put("msg","Se debe ingresar un valor mayor a 0");
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
-        }
-        if(producto==null){
-            response.put("msg","No se encontró Producto con ese id");
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
-        }
         bajaAlta.setProducto(producto);
         if(bajaAlta.getAlta()) {
             bajaAlta.getProducto().setStock(bajaAlta.getProducto().getStock() + bajaAlta.getCantidad());
         }else{
             if(bajaAlta.getCantidad() > bajaAlta.getProducto().getStock()){
-                response.put("msg","No hay suficiente stock para realizar la baja");
+                response.put("error","No hay suficiente stock para realizar la baja");
+                response.put("msg", "Error al validar la Baja o Alta");
                 return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
             }
             bajaAlta.getProducto().setStock(bajaAlta.getProducto().getStock() - bajaAlta.getCantidad());

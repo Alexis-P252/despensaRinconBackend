@@ -48,10 +48,19 @@ public class AvisoController {
         return new ResponseEntity<Aviso>(aviso,HttpStatus.OK);
     }
     @PostMapping("")
-    public ResponseEntity<?> create(@RequestBody Aviso aviso)     {
+    public ResponseEntity<?> create(@Valid @RequestBody Aviso aviso, BindingResult result)     {
         Aviso newAviso =null;
         Map <String,Object> response = new HashMap<>();
         List<String> error = new ArrayList<>();
+
+        if(result.hasErrors()){
+            for(FieldError err: result.getFieldErrors()){
+                error.add("En el campo " + err.getField() + " " +err.getDefaultMessage());
+            }
+            response.put("error", error);
+            response.put("msg", "Error al validar el aviso");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
 
         try{
             newAviso = avisoService.save(aviso);
@@ -75,7 +84,8 @@ public class AvisoController {
         List<String> error = new ArrayList<>();
 
         if(avisoActual == null) {
-            response.put("msg","No existe un aviso con id = ".concat(id.toString()));
+            response.put("error","No existe un aviso con id = ".concat(id.toString()));
+            response.put("msg", "Error al encontrar el aviso");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
         }
 
@@ -83,7 +93,7 @@ public class AvisoController {
             List<String> errors = new ArrayList<>();
 
             for(FieldError err: result.getFieldErrors()){
-                errors.add("En el campo: " + err.getField() + " - " +err.getDefaultMessage());
+                errors.add("En el campo " + err.getField() + " " +err.getDefaultMessage());
             }
             response.put("error", errors);
             response.put("msg", "Error al validar el aviso");

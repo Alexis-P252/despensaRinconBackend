@@ -46,12 +46,26 @@ public class CategoriaController {
         }
         return new ResponseEntity<Categoria>(ca,HttpStatus.OK);
     }
+
     @PostMapping("")
-    public ResponseEntity<?> create(@RequestBody Categoria categoria)     {
+    public ResponseEntity<?> create(@Valid @RequestBody Categoria categoria, BindingResult result)     {
         Categoria newCategoria =null;
         Map <String,Object> response = new HashMap<>();
         List<String> error = new ArrayList<>();
 
+        if(null != categoriaService.findByNombre(categoria.getNombre())){
+            error.add("Ya existe una categoria con ese nombre");
+        }
+        if(result.hasErrors()){
+            for(FieldError err: result.getFieldErrors()){
+                error.add("En el campo " + err.getField() + " " +err.getDefaultMessage());
+            }
+        }
+        if(!error.isEmpty()){
+            response.put("error", error);
+            response.put("msg", "Error al validar la Categoria");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
         try{
             newCategoria = categoriaService.save(categoria);
         } catch (DataAccessException e){
@@ -73,25 +87,24 @@ public class CategoriaController {
         Map<String,Object> response = new HashMap<>();
         List<String> error = new ArrayList<>();
         if(categoriaActual == null) {
-            response.put("msg","No existe una categoria con id = ".concat(id.toString()));
+            response.put("error","No existe una categoria con id = ".concat(id.toString()));
+            response.put("msg", "Error al encontrar la categoria");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
         }
-
-        if(result.hasErrors()){
-            List<String> errors = new ArrayList<>();
-
-            for(FieldError err: result.getFieldErrors()){
-                errors.add("En el campo: " + err.getField() + " - " +err.getDefaultMessage());
-            }
-            response.put("errors", errors);
-            response.put("msg", "Error al validar la categoria");
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
-
+        if(null != categoriaService.findByNombre(categoria.getNombre())){
+            error.add("Ya existe una categoria con ese nombre");
         }
-
-
+        if(result.hasErrors()){
+            for(FieldError err: result.getFieldErrors()){
+                error.add("En el campo " + err.getField() + " " +err.getDefaultMessage());
+            }
+        }
+        if(!error.isEmpty()){
+            response.put("error", error);
+            response.put("msg", "Error al validar la Categoria");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
         categoriaActual.setNombre(categoria.getNombre());
-
         try {
             categoriaActual = categoriaService.save(categoriaActual);
         }catch(DataAccessException e) {
@@ -126,10 +139,8 @@ public class CategoriaController {
             return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
 
         }else{
+            response.put("error","No se encontro la categoria "+id);
             response.put("msg","Error tal intentar eliminar la categoria");
-            error.add("No existe una categoria con id = "+ id);
-
-            response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
 

@@ -1,7 +1,9 @@
 package uteclab.despensaRincon.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 import java.util.List;
@@ -10,7 +12,7 @@ public class Compra {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotEmpty
+    @NotNull
     @Temporal(TemporalType.DATE)
     private Date fecha;
     private String comentario;
@@ -18,9 +20,11 @@ public class Compra {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "compra_id")
+    @NotNull
     private List<LineaCompra> lineasCompra;
     @ManyToOne (cascade=CascadeType.ALL)
     @JoinColumn(name="proveedor_id")
+    @NotNull
     private Proveedor proveedor;
 
     public Long getId() {
