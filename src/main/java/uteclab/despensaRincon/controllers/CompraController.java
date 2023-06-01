@@ -1,9 +1,12 @@
 package uteclab.despensaRincon.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import uteclab.despensaRincon.entities.Compra;
 import uteclab.despensaRincon.entities.LineaCompra;
@@ -56,53 +59,58 @@ public class CompraController {
         }
         return new ResponseEntity<Compra>(compra,HttpStatus.OK);
     }
-
     @PostMapping("")
-    public ResponseEntity<?> create(@RequestBody Compra compra){
+    public ResponseEntity<?> create(@Valid @RequestBody Compra compra, BindingResult result){
         Compra compraNew = null;
         Map<String, Object> response = new HashMap<>();
         List<String> error = new ArrayList<>();
 
         Proveedor proveedor =null;
         if (compra.getProveedor()==null){
-            response.put("msg","No se selecciono un proveedor");
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+            error.add("No se selecciono un proveedor");
         }else{
             proveedor = proveedorService.findById(compra.getProveedor().getId());
             if (proveedor==null){
-                    response.put("msg","No existe un proveedor con ese id");
-                    return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+                    error.add("No existe un proveedor con ese id");
             }
         }
-
+        if(result.hasErrors()){
+            for(FieldError err: result.getFieldErrors())
+                error.add("En el campo " + err.getField() + " " + err.getDefaultMessage());
+        }
         if (compra.getLineasCompra().size()==0){
-            response.put("msg","No tiene lineas de compra");
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+            error.add("No tiene lineas de compra");
         }else{
             for (int i=0;i<compra.getLineasCompra().size();i++){
                 if (compra.getLineasCompra().get(i).getProducto()==null){
-                    response.put("msg","No se selecciono un producto");
-                    return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+                    error.add("No se selecciono un producto");
                 }else{
                     if (compra.getLineasCompra().get(i).getProducto().getId()==null || compra.getLineasCompra().get(i).getProducto().getId()==0){
-                        response.put("msg","No se selecciono un producto");
-                        return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+                        error.add("No se selecciono producto en al menos una linea");
                     }else{
                         Producto producto =productoService.findById(compra.getLineasCompra().get(i).getProducto().getId());
                             if (producto==null) {
-                                response.put("msg", "No existe un producto con ese id");
-                                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+                                error.add("No existe un producto con ese id");
+                            }else{
+                                compra.getLineasCompra().get(i).setProducto(producto);
                             }
                             if(compra.getLineasCompra().get(i).getCantidad()<=0){
-                                response.put("msg", "Cantidad no puede ser 0");
-                                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+                                error.add("Cantidad no puede ser igual o menor 0");
+                            }
+                            if(compra.getLineasCompra().get(i).getPrecio()<=0){
+                                error.add("Precio compra no puede ser igual o menor a 0");
                             }
 
-                        compra.getLineasCompra().get(i).setProducto(producto);
                         }
                     }
                 }
             }
+
+        if(!error.isEmpty()){
+            response.put("error",error);
+            response.put("msg","Error al validar la Compra");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
         compra.setProveedor(proveedor);
         try {
             compraNew = compraService.save(compra);

@@ -30,4 +30,6 @@ public class CategoriaService implements ICategoriaService {
     public void deleteById(Long id) {
         categoriaDao.deleteById(id);
     }
+    @Override
+    public Categoria findByNombre (String nombre){ return categoriaDao.findByNombre(nombre);}
 }

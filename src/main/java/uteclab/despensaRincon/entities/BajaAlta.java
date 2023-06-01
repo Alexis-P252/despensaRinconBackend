@@ -1,6 +1,10 @@
 package uteclab.despensaRincon.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 @Entity
@@ -8,14 +12,20 @@ public class BajaAlta {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @NotNull
     private Boolean alta;
 
     @Temporal(TemporalType.DATE)
     private Date fecha;
+    @NotEmpty
+    @Size(min = 4, max = 35)
     private String motivo;
+
+    @Min(1)
     private Long cantidad;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="producto_id")
+    @NotNull
     private Producto producto;
 
     public Long getId() {

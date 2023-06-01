@@ -4,4 +4,5 @@ import org.springframework.data.repository.CrudRepository;
 import uteclab.despensaRincon.entities.Categoria;
 
 public interface ICategoriaDao extends CrudRepository<Categoria, Long> {
+    public Categoria findByNombre(String nombre);
 }

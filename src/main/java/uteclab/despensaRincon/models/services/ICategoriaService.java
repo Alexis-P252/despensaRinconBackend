@@ -10,4 +10,5 @@ public interface ICategoriaService {
     public Categoria findById(Long id);
     public Categoria save (Categoria em);
     public void deleteById (Long id);
+    public Categoria findByNombre(String nombre);
 }
