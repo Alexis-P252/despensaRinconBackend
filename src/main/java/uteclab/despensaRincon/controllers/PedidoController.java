@@ -196,7 +196,7 @@ public class PedidoController {
         String cedulaFiltrada = validator.cleanCi(cedula);
 
          try {
-             pedidos  = pedidoService.buscarPedidos (cedula,contenido,filtro);
+             pedidos  = pedidoService.buscarPedidos (cedula.trim(),contenido.trim(),filtro);
         } catch (DataAccessException e) {
             List<String> error = new ArrayList<>();
             response.put("msg", "Error al acceder a la base de datos");

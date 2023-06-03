@@ -152,7 +152,7 @@ public class CategoriaController {
             query = "";
         }
         try {
-            categorias = categoriaService.buscarCategorias(query);
+            categorias = categoriaService.buscarCategorias(query.trim());
         } catch (DataAccessException e) {
             List<String> error = new ArrayList<>();
             response.put("msg", "Error al acceder a la base de datos");

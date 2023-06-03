@@ -30,8 +30,10 @@ public class ProveedorService implements IProveedorService{
     public void deleteById(Long id) {
         proveedorDao.deleteById(id);
     }
- //   @Override
-   // public void putVendedor(Vendedor vendedor){ }
+    @Override
+    public List<Proveedor> buscarProveedores (String query) {
+        return proveedorDao.findByNombreContainingIgnoreCaseOrCorreoContainingIgnoreCase(query,query);
+    }
 
 
 }

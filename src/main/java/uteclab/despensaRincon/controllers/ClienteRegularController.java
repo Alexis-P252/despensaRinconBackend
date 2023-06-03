@@ -174,7 +174,7 @@ public class ClienteRegularController {
         String cedula = validator.cleanCi(query);
 
          try {
-            clientes = clienteRegularService.buscarClientesRegulares (cedula,query,query);
+            clientes = clienteRegularService.buscarClientesRegulares (cedula.trim(),query.trim(),query.trim());
         } catch (DataAccessException e) {
             List<String> error = new ArrayList<>();
             response.put("msg", "Error al acceder a la base de datos");

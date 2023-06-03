@@ -10,4 +10,6 @@ public interface IVendedorService {
     public Vendedor findById(Long id);
     public Vendedor save (Vendedor vendedor);
     public void deleteById (Long id);
+    public List<Vendedor> buscarVendedores (String query);
+    //public List<Vendedor> buscarVendedores (String query,Long proveedor);
 }

@@ -192,7 +192,7 @@ public class AvisoController {
             query = "";
         }
         try {
-            avisos = avisoService.buscarAvisos(query,query);
+            avisos = avisoService.buscarAvisos(query.trim(),query.trim());
         } catch (DataAccessException e) {
             List<String> error = new ArrayList<>();
             response.put("msg", "Error al acceder a la base de datos");
