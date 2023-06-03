@@ -9,13 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import uteclab.despensaRincon.entities.Aviso;
 import uteclab.despensaRincon.entities.ClienteRegular;
 import uteclab.despensaRincon.entities.Pedido;
 import uteclab.despensaRincon.models.services.ClienteRegularService;
 import uteclab.despensaRincon.models.services.PedidoService;
+import com.fabdelgado.ciuy.*;
 
-import javax.xml.crypto.Data;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -168,5 +168,43 @@ public class PedidoController {
             response.put("error", error);
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
+    }
+//se puede mandar cedula para buscar por cliente, detalle para buscar dentro del pedido o finalizado, pendiente o todos(para este ultimo debe ser null el finalizado)
+    @GetMapping("buscar/{cedula}/{contenido}/{finalizados}")
+    public ResponseEntity<?> buscarPedido (@RequestParam(value = "cedula",required = false) String cedula,@RequestParam(value = "contenido",required = false) String contenido, @RequestParam(value = "finalizados",required = false) Boolean finalizado){
+        Map<String, Object> response = new HashMap<>();
+        List<Pedido> pedidos = new ArrayList<>();
+        int filtro =0; // 0 trae todos, 1 trae finalizados, 2 trae pendientes
+
+        if(finalizado == null){
+            filtro = 0;
+        }else{
+            if(finalizado){
+                filtro = 1;
+            }else{
+                filtro =2;
+            }
+        }
+        if(cedula == null){
+            cedula="";
+        }
+        if(contenido == null){
+            contenido="";
+        }
+
+        Validator validator = new Validator();
+        String cedulaFiltrada = validator.cleanCi(cedula);
+
+         try {
+             pedidos  = pedidoService.buscarPedidos (cedula,contenido,filtro);
+        } catch (DataAccessException e) {
+            List<String> error = new ArrayList<>();
+            response.put("msg", "Error al acceder a la base de datos");
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<Pedido>>(pedidos, HttpStatus.OK);
+
     }
 }

@@ -5,11 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import com.fabdelgado.ciuy.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import uteclab.despensaRincon.entities.Aviso;
 import uteclab.despensaRincon.entities.ClienteRegular;
 import uteclab.despensaRincon.models.services.ClienteRegularService;
 
@@ -161,6 +160,30 @@ public class ClienteRegularController {
         response.put("msg", "Cliente regular  actualizado correctamente");
         response.put("cliente", actual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
+    }
+    /* va a buscar por cedula(filtra todo lo que no es numero), nombre y correo */
+    @GetMapping("buscar/{query}")
+    public ResponseEntity<?> buscarCliente (@RequestParam(value = "query",required = false) String query){
+        Map<String, Object> response = new HashMap<>();
+        List<ClienteRegular> clientes = new ArrayList<>();
+
+        if(query == null){
+            query="";
+        }
+        Validator validator = new Validator();
+        String cedula = validator.cleanCi(query);
+
+         try {
+            clientes = clienteRegularService.buscarClientesRegulares (cedula,query,query);
+        } catch (DataAccessException e) {
+            List<String> error = new ArrayList<>();
+            response.put("msg", "Error al acceder a la base de datos");
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<ClienteRegular>>(clientes, HttpStatus.OK);
+
     }
 
 }

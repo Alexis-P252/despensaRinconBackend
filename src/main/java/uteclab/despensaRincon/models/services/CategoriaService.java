@@ -3,6 +3,7 @@ package uteclab.despensaRincon.models.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uteclab.despensaRincon.entities.Categoria;
+import uteclab.despensaRincon.entities.ClienteRegular;
 import uteclab.despensaRincon.models.dao.ICategoriaDao;
 
 import java.util.List;
@@ -32,4 +33,9 @@ public class CategoriaService implements ICategoriaService {
     }
     @Override
     public Categoria findByNombre (String nombre){ return categoriaDao.findByNombre(nombre);}
+    @Override
+    public List<Categoria> buscarCategorias(String query) {
+        return categoriaDao.findByNombreContainingIgnoreCase(query);
+    }
+
 }
