@@ -1,6 +1,7 @@
 package uteclab.despensaRincon.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
 @Entity
@@ -15,6 +16,7 @@ public class ClienteRegular {
     private String nombre;
     private String telefono;
     private String celular;
+    @Email
     private String correo;
 
     public Long getId() {
