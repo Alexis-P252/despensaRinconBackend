@@ -143,7 +143,24 @@ public class CategoriaController {
             response.put("msg","Error tal intentar eliminar la categoria");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
-
+    }
+    @GetMapping("buscar/{query}")
+    public ResponseEntity<?> buscarCategoria (@RequestParam(value = "query",required = false) String query){
+        Map<String, Object> response = new HashMap<>();
+        List<Categoria> categorias = new ArrayList<>();
+        if(query == null || query.isEmpty()){
+            query = "";
+        }
+        try {
+            categorias = categoriaService.buscarCategorias(query.trim());
+        } catch (DataAccessException e) {
+            List<String> error = new ArrayList<>();
+            response.put("msg", "Error al acceder a la base de datos");
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<Categoria>>(categorias, HttpStatus.OK);
     }
 
 

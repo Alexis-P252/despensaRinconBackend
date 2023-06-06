@@ -1,6 +1,7 @@
 package uteclab.despensaRincon.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -24,6 +25,7 @@ public class Vendedor {
         return id;
     }
 
+    //@JsonInclude(JsonInclude.Include.ALWAYS)
     public List<Proveedor> getProveedores() {
         return proveedores;
     }

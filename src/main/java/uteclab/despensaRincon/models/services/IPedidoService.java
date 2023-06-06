@@ -11,5 +11,6 @@ public interface IPedidoService {
     public Pedido findById(Long id);
     public Pedido save (Pedido pedido);
     public void deleteById (Long id);
+    public List<Pedido> buscarPedidos (String cedula, String contenido, int filtro);
 
 }

@@ -13,7 +13,6 @@ public class Proveedor {
     @NotEmpty
     private String nombre;
     private String direccion;
-
     private String  correo;
     @ManyToMany
     private List<Vendedor> vendedores;

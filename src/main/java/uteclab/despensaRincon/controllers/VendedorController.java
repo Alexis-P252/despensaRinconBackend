@@ -124,6 +124,48 @@ public class VendedorController {
         response.put("producto", vendedorActual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
     }
+    @GetMapping("buscar/{query}")
+    public ResponseEntity<?> buscarVendedor (@RequestParam(value = "query",required = false) String query){
+        Map<String, Object> response = new HashMap<>();
+        List<Vendedor> vendedores = new ArrayList<>();
+        if(query == null){
+            query = "";
+        }
+        try {
+            vendedores = vendedorService.buscarVendedores (query.trim());
+        } catch (DataAccessException e) {
+            List<String> error = new ArrayList<>();
+            response.put("msg", "Error al acceder a la base de datos");
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<Vendedor>>(vendedores, HttpStatus.OK);
+    }
+
+/*
+    @GetMapping("buscar/{query}/{proveedor}")
+    public ResponseEntity<?> buscarVendedor (@RequestParam(value = "query",required = false) String query, @RequestParam(value = "proveedor",required = false) Long proveedor){
+        Map<String, Object> response = new HashMap<>();
+        List<Vendedor> vendedores = new ArrayList<>();
+        if(query == null || query.isEmpty()){
+            query = "";
+        }
+        if(proveedor == null){
+            proveedor = 0L;
+        }
+        try {
+            vendedores = vendedorService.buscarVendedores (query.trim(),proveedor);
+        } catch (DataAccessException e) {
+            List<String> error = new ArrayList<>();
+            response.put("msg", "Error al acceder a la base de datos");
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<Vendedor>>(vendedores, HttpStatus.OK);
+    }
+*/
 
 
 

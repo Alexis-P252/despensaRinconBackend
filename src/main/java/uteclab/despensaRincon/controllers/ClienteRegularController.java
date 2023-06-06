@@ -5,11 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import com.fabdelgado.ciuy.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import uteclab.despensaRincon.entities.Aviso;
 import uteclab.despensaRincon.entities.ClienteRegular;
 import uteclab.despensaRincon.models.services.ClienteRegularService;
 
@@ -57,9 +56,19 @@ public class ClienteRegularController {
         ClienteRegular newClienteR = null;
         Map <String,Object> response = new HashMap<>();
         List<String> error = new ArrayList<>();
+        Validator validator = new Validator();
 
-        if(clienteRegularService.findByCedula(clienteR.getCedula()) != null){
+        String cedula = validator.cleanCi(clienteR.getCedula());
+
+
+        if(clienteRegularService.findByCedula(cedula) != null){
             error.add("Ya existe un cliente registrado con la cedula " + clienteR.getCedula());
+        }else{
+            if(validator.validateCi(cedula)){
+                clienteR.setCedula(cedula);
+            }else {
+                error.add("La cedula "+clienteR.getCedula()+" no es valida");
+            }
         }
 
         if(result.hasErrors()){
@@ -120,28 +129,39 @@ public class ClienteRegularController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody ClienteRegular cr, BindingResult result,  @PathVariable(value="id")Long id){
+    public ResponseEntity<?> update(@Valid @RequestBody ClienteRegular cr, BindingResult result,  @PathVariable(value="id")Long id){
 
         ClienteRegular actual = clienteRegularService.findById(id);
-
         Map<String,Object> response = new HashMap<>();
         List<String> error = new ArrayList<>();
+        Validator validator = new Validator();
+
 
         if(actual == null) {
-            response.put("msg","No existe un cliente regular con id = ".concat(id.toString()));
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+            error.add("No existe un cliente regular con id = ".concat(id.toString()));
+        }
+
+        String cedula = validator.cleanCi(cr.getCedula());
+        ClienteRegular clienteCedula = clienteRegularService.findByCedula(cedula);
+        if(clienteCedula != null && clienteCedula.getId() != id){
+            error.add("Ya existe un cliente registrado con la cedula " + cr.getCedula());
+        }else{
+            if(validator.validateCi(cedula)){;
+                cr.setCedula(cedula);
+            }else {
+                error.add("La cedula ingresada no es valida" + cr.getCedula());
+            }
         }
 
         if(result.hasErrors()){
-            List<String> errors = new ArrayList<>();
-
             for(FieldError err: result.getFieldErrors()){
-                errors.add("En el campo: " + err.getField() + " - " +err.getDefaultMessage());
+                error.add("En el campo: " + err.getField() + " - " +err.getDefaultMessage());
             }
-            response.put("error", errors);
+        }
+        if(error.size() > 0){
+            response.put("error", error);
             response.put("msg", "Error al validar el cliente regular");
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
-
         }
 
         actual.setCedula(cr.getCedula());
@@ -161,6 +181,30 @@ public class ClienteRegularController {
         response.put("msg", "Cliente regular  actualizado correctamente");
         response.put("cliente", actual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
+    }
+    /* va a buscar por cedula(filtra todo lo que no es numero), nombre y correo */
+    @GetMapping("buscar/{query}")
+    public ResponseEntity<?> buscarCliente (@RequestParam(value = "query",required = false) String query){
+        Map<String, Object> response = new HashMap<>();
+        List<ClienteRegular> clientes = new ArrayList<>();
+
+        if(query == null){
+            query="";
+        }
+        Validator validator = new Validator();
+        String cedula = validator.cleanCi(query);
+
+         try {
+            clientes = clienteRegularService.buscarClientesRegulares (cedula.trim(),query.trim(),query.trim());
+        } catch (DataAccessException e) {
+            List<String> error = new ArrayList<>();
+            response.put("msg", "Error al acceder a la base de datos");
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<ClienteRegular>>(clientes, HttpStatus.OK);
+
     }
 
 }

@@ -11,5 +11,7 @@ public interface IClienteRegularService {
     public ClienteRegular findByCedula(String cedula);
     public ClienteRegular save(ClienteRegular cr);
     public void deleteById(Long id);
+    public List<String> findAllCorreos();
+    public List<ClienteRegular> buscarClientesRegulares (String cedula, String nombre, String correo);
 
 }

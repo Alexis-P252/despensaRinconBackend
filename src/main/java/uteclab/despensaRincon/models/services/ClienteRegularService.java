@@ -25,4 +25,10 @@ public class ClienteRegularService implements IClienteRegularService{
     public ClienteRegular save(ClienteRegular cr) { return clienteRegularDao.save(cr); }
     @Override
     public void deleteById(Long id) { clienteRegularDao.deleteById(id); }
+    @Override
+    public List<String> findAllCorreos(){ return clienteRegularDao.findAllCorreos();}
+    @Override
+    public List<ClienteRegular> buscarClientesRegulares(String cedula, String nombre, String correo) {
+        return clienteRegularDao.findByCedulaContainingIgnoreCaseOrNombreContainingIgnoreCaseOrCorreoContainingIgnoreCase(cedula,nombre,correo);
+    }
 }

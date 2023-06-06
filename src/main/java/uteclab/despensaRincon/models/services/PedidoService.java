@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uteclab.despensaRincon.entities.Pedido;
 import uteclab.despensaRincon.models.dao.IPedidoDao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,5 +37,29 @@ public class PedidoService implements IPedidoService {
     @Override
     public void deleteById(Long id) {
         pedidoDao.deleteById(id);
+    }
+    @Override
+    public List<Pedido>  buscarPedidos (String cedula, String contenido, int filtro){
+        if(filtro ==0){
+            return pedidoDao.findByCedulaContainingIgnoreCaseAndContenidoContainingIgnoreCase(cedula, contenido);
+        }else{
+            List<Pedido> pedidos = pedidoDao.findByCedulaContainingIgnoreCaseAndContenidoContainingIgnoreCase(cedula, contenido);
+            List<Pedido> pedidosFiltrados = new ArrayList<>();
+            if(filtro == 1){
+                for (Pedido pedido : pedidos) {
+                    if (pedido.getFinalizado()) {
+                        pedidosFiltrados.add(pedido);
+                    }
+                }
+            }else{
+                for (Pedido pedido : pedidos) {
+                    if (!pedido.getFinalizado()) {
+                        pedidosFiltrados.add(pedido);
+                    }
+
+                }
+            }
+                return pedidosFiltrados;
+        }
     }
 }
