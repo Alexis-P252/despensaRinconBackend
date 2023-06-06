@@ -154,7 +154,7 @@ public class AvisoController {
 
     }
 
-    @GetMapping("reenvio/{id}")
+    @PutMapping("reenvio/{id}")
     public ResponseEntity<?> reenvioAviso (@PathVariable(value = "id") Long id){
         Aviso aviso = null;
         Map<String, Object> response = new HashMap<>();
