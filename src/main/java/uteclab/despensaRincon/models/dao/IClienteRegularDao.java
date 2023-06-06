@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface IClienteRegularDao extends CrudRepository<ClienteRegular, Long> {
 
+
     Optional<ClienteRegular> findByCedula(String cedula);
 }
