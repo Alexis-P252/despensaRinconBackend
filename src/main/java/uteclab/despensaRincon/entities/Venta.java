@@ -11,7 +11,6 @@ public class Venta {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotEmpty
     @Temporal(TemporalType.DATE)
 
     private Date fecha;

@@ -22,8 +22,8 @@ public class Compra {
     @JoinColumn(name = "compra_id")
     @NotNull
     private List<LineaCompra> lineasCompra;
-    @ManyToOne (cascade=CascadeType.ALL)
-    @JoinColumn(name="proveedor_id")
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name="proveedor_id", nullable = true)
     @NotNull
     private Proveedor proveedor;
 

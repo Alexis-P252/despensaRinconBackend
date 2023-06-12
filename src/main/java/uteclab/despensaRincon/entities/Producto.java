@@ -26,8 +26,8 @@ public class Producto {
     private String imagen;
     private boolean visible;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "proveedor_id")
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "proveedor_id", nullable = true)
     @JsonIgnore
     private List<Proveedor> proveedores;
 
