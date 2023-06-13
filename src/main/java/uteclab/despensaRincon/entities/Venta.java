@@ -18,6 +18,7 @@ public class Venta {
     private Float total;
     private Float montoDeuda;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "venta_id")
     private List<LineaVenta> lineasVenta;
   //  @Column(nullable = true)
     @ManyToOne
