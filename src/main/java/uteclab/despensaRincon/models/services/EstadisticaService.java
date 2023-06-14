@@ -22,7 +22,6 @@ public class EstadisticaService {
     public List<Estadistica>  cantVentasPorCategoria(Date fechaInicial, Date fechaFinal){
         List<Object[]> resultados = estadisticaDao.getCantidadVentasPorCategoria(fechaInicial, fechaFinal);
         List<Estadistica> estadisticas = new ArrayList<>();
-
         for (Object[] resultado : resultados) {
             Estadistica estadistica = new Estadistica();
             estadistica.setNombre((String) resultado[0]);
@@ -38,6 +37,54 @@ public class EstadisticaService {
         estadistica.setCant1(estadistica.getCant2()-estadistica.getCant3());
         return estadistica;
     }
-
-
+///4
+    public List<Estadistica>  productosMasVendidos(Date fechaInicial, Date fechaFinal){
+        List<Object[]> resultados = estadisticaDao.productosMasVendidos(fechaInicial, fechaFinal);
+        List<Estadistica> estadisticas = new ArrayList<>();
+        for (Object[] resultado : resultados) {
+            Estadistica estadistica = new Estadistica();
+            estadistica.setNombre((String) resultado[0]);
+            estadistica.setCant1(((Number) resultado[1]).floatValue());
+            estadistica.setCant2(((Number) resultado[2]).floatValue());
+            estadisticas.add(estadistica);
+        }
+        return estadisticas;
+    }
+///5
+    public List<Estadistica>  productosMasComprados(Date fechaInicial, Date fechaFinal){
+        List<Object[]> resultados = estadisticaDao.productosMasComprados(fechaInicial, fechaFinal);
+        List<Estadistica> estadisticas = new ArrayList<>();
+        for (Object[] resultado : resultados) {
+            Estadistica estadistica = new Estadistica();
+            estadistica.setNombre((String) resultado[0]);
+            estadistica.setCant1(((Number) resultado[1]).floatValue());
+            estadistica.setCant2(((Number) resultado[2]).floatValue());
+            estadisticas.add(estadistica);
+        }
+        return estadisticas;
+    }
+///6
+    public Estadistica cantVentaClientesRegulares(@Param("fechaInicial") Date fechaInicial, @Param("fechaFinal") Date fechaFinal){
+        return estadisticaDao.cantVentaClientesRegulares(fechaInicial,fechaFinal);
+    }
+///7
+    public List<Estadistica>  comprasProveedores(@Param("fechaInicial") Date fechaInicial, @Param("fechaFinal") Date fechaFinal){
+        return estadisticaDao.comprasProveedores(fechaInicial,fechaFinal);
+    }
+///8
+    public List<Estadistica>  mejoresClientes(@Param("fechaInicial") Date fechaInicial, @Param("fechaFinal") Date fechaFinal){
+        return estadisticaDao.mejoresClientes(fechaInicial,fechaFinal);
+    }
+///9 ventaUltimos7Dias
+    public List<Estadistica>  ventaUltimos7Dias(){
+    List<Object[]> resultados = estadisticaDao.ventaUltimos7Dias();
+    List<Estadistica> estadisticas = new ArrayList<>();
+        for (Object[] resultado : resultados) {
+            Estadistica estadistica = new Estadistica();
+            estadistica.setNombre( resultado[0].toString());
+            estadistica.setCant1(((Number) resultado[1]).floatValue());
+            estadisticas.add(estadistica);
+        }
+        return estadisticas;
+    }
 }

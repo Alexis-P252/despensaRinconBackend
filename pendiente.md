@@ -39,8 +39,7 @@ Entidad:
 
 7) Total de compras a tal proveedor desde x fecha hasta x fecha 
    INPUTS: fecha1, fecha2
-   OU
-8) INTPUT: nombre (Nombre del proveedor), cant1 (Cantidad de compras a ese proveedor), cant2(Total gastado en dichas compras)
+   OUTPUT: nombre (Nombre del proveedor), cant1 (Cantidad de compras a ese proveedor), cant2(Total gastado en dichas compras)
 
 8) Top 5 Clientes con mayor gasto desde x fecha hasta x fecha -- nombre, cant
    INPUTS: fecha1, fecha2
