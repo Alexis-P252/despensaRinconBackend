@@ -142,6 +142,27 @@ public class VendedorController {
         }
         return new ResponseEntity<List<Vendedor>>(vendedores, HttpStatus.OK);
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+        if(vendedorService.findById(id)==null){
+            response.put("msg", "Error al intentar eliminar el vendedor");
+            error.add("No existe un vendedor con id = " + id);
+            response.put("error", error);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+        try{
+            vendedorService.deleteById(id);
+        } catch (DataAccessException e) {
+            response.put("msg", "Hubo un error al intentar eliminar el vendedor");
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("msg", "Vendedor eliminado correctamente");
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+    }
 
 /*
     @GetMapping("buscar/{query}/{proveedor}")
