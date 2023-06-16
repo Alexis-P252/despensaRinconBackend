@@ -13,6 +13,8 @@ public class VendedorService implements IVendedorService {
 
     @Autowired
     private IVendedorDao vendedorDao;
+    @Autowired
+    private IProveedorService proveedorService;
 
     @Override
     public List<Vendedor> findAll() {
@@ -31,6 +33,11 @@ public class VendedorService implements IVendedorService {
 
     @Override
     public void deleteById(Long id) {
+        List<Proveedor> proveedores= vendedorDao.findAllByVendedorId(id);
+        for (Proveedor proveedor : proveedores) {
+            proveedor.getVendedores().removeIf(vendedor -> vendedor.getId().equals(id));
+            proveedorService.save(proveedor);
+        }
         vendedorDao.deleteById(id);
     }
     public List<Vendedor> buscarVendedores(String query) {
