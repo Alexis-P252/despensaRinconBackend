@@ -58,5 +58,12 @@ public class CompraService implements ICompraService {
         compraDao.save(compra);
         compraDao.deleteById(compra.getId());
     }
+    public List<Compra> findByProveedor (Long proveedor_id){
+        return compraDao.findByProveedor(proveedor_id);
+    }
+    @Override
+    public Compra saveCambios(Compra compra) {
+        return compraDao.save(compra);
+    }
 
 }

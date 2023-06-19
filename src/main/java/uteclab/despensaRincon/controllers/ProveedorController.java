@@ -124,34 +124,6 @@ public class ProveedorController {
         response.put("proveedor", proveedorActual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable(value="id") Long id) {
-
-        Map<String,Object> response = new HashMap<>();
-        List<String> error = new ArrayList<>();
-
-        if(proveedorService.findById(id) != null ){
-            try{
-                proveedorService.deleteById(id);
-
-            }catch(DataAccessException e){
-                response.put("msg","Hubo un error al intentar eliminar la proveedor");
-                error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-                response.put("error", error);
-                return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-            response.put("msg","Proveedor eliminada correctamente");
-            return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
-
-        }else{
-            response.put("msg","Error tal intentar eliminar al proveedor");
-            error.add("No existe un proveedor con id =" + id);
-            response.put("error", error);
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
-        }
-
-    }
     @PutMapping("/vendedor/{id}")
     public ResponseEntity<?> addVendedor(@Valid @RequestBody Vendedor vendedor, BindingResult result, @PathVariable(value="id")Long id ) {
         Proveedor proveedorActual = proveedorService.findById(id);
@@ -248,5 +220,32 @@ public class ProveedorController {
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<List<Proveedor>>(proveedores, HttpStatus.OK);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+
+        if (proveedorService.findById(id) != null) {
+            try {
+                proveedorService.deleteById(id);
+
+            } catch (DataAccessException e) {
+                response.put("msg", "Hubo un error al intentar eliminar el proveedor");
+                error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                response.put("error", error);
+                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            response.put("msg", "Proveedor eliminado correctamente");
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+
+        } else {
+            response.put("msg", "Error al intentar eliminar el proveedor");
+            error.add("No existe un proveedor con id = " + id);
+            response.put("error", error);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+
     }
 }

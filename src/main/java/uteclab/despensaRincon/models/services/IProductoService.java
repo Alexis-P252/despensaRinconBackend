@@ -21,4 +21,5 @@ public interface IProductoService {
     public void deleteById (Long id);
 
     public ResponseEntity<?> buscador(String query, Long categoria_id, Boolean visible);
+    public List<Producto>  findByProveedor (Long proveedor_id);
 }

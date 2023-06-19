@@ -11,7 +11,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import uteclab.despensaRincon.entities.Producto;
 import uteclab.despensaRincon.entities.Proveedor;
-import uteclab.despensaRincon.entities.Vendedor;
 import uteclab.despensaRincon.models.services.ProductoService;
 import uteclab.despensaRincon.models.services.ProveedorService;
 
@@ -27,6 +26,8 @@ import java.util.Map;
 public class ProductoController {
     @Autowired
     private ProductoService productoService;
+    @Autowired
+    private ProveedorService proveedorService;
 
     @Autowired
     private ProveedorService proveedorService;
@@ -282,5 +283,50 @@ public class ProductoController {
 
     }
 
+
+    @PutMapping("/vendedorQuitar/{id}")
+    public ResponseEntity<?> removerProveedor(@Valid @RequestBody Proveedor proveedor, BindingResult result, @PathVariable(value="id")Long id ) {
+        Map<String, Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+        Producto productoActual = productoService.findById(id);
+
+        if (productoActual == null) {
+            error.add("No existe un producto con id = ".concat(id.toString()));
+        }
+        if (proveedorService.findById(proveedor.getId()) == null) {
+            error.add("No existe un proveedor con id = ".concat(proveedor.getId().toString()));
+        }
+        if(error.size()>0){
+            response.put("msg", "Error al validar la vinculación");
+            response.put("error", error);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        Boolean existe = false;
+        List<Proveedor> proveedoresActual = productoActual.getProveedores();
+        for (int i = 0; i < proveedoresActual.size(); i++) {
+            if (proveedoresActual.get(i).getId() == proveedor.getId()) {
+                proveedoresActual.remove(i);
+                existe = true;
+            }
+        }
+        if (!existe) {
+            response.put("msg", "Error al validar la vinculación");
+            response.put("error", "El producto no tiene un proveedor con id = ".concat(proveedor.getId().toString()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        productoActual.setProveedores(proveedoresActual);
+        try {
+            productoActual = productoService.save(productoActual);
+        } catch (DataAccessException e) {
+            response.put("msg", "Error al intentar desvinclar el proveedor al producto");
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("msg", "Vendedor quitado correctamente");
+        response.put("producto", productoActual);
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+    }
 
 }
