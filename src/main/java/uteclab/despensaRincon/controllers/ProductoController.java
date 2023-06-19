@@ -1,6 +1,7 @@
 package uteclab.despensaRincon.controllers;
 
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import uteclab.despensaRincon.entities.Producto;
+import uteclab.despensaRincon.entities.Proveedor;
+import uteclab.despensaRincon.entities.Vendedor;
 import uteclab.despensaRincon.models.services.ProductoService;
+import uteclab.despensaRincon.models.services.ProveedorService;
 
 import javax.naming.Binding;
 import java.util.ArrayList;
@@ -23,6 +27,9 @@ import java.util.Map;
 public class ProductoController {
     @Autowired
     private ProductoService productoService;
+
+    @Autowired
+    private ProveedorService proveedorService;
 
     @GetMapping("")
     public List<Producto> findAll() {
@@ -147,6 +154,9 @@ public class ProductoController {
         productoActual.setPrecio_venta(producto.getPrecio_venta());
         productoActual.setStock_minimo(producto.getStock_minimo());
         productoActual.setVisible(producto.isVisible());
+        if(producto.getProveedores() != null){
+            productoActual.setProveedores(producto.getProveedores());
+        }
 
 
         try {
@@ -158,6 +168,87 @@ public class ProductoController {
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("msg", "Producto actualizado correctamente");
+        response.put("producto", productoActual);
+        return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/agregarProveedor/{id}")
+    public ResponseEntity<?> agregarProveedor(@Valid @RequestBody Proveedor proveedor, BindingResult result, @PathVariable(value="id")Long id){
+        Producto productoActual = productoService.findById(id);
+        Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+        if(productoActual == null) {
+            response.put("msg","No existe un producto con id = ".concat(id.toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        if(proveedorService.findById(proveedor.getId()) == null){
+            response.put("msg","No existe un proveedor con id = ".concat(proveedor.getId().toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        Boolean existe = false;
+        List<Proveedor> proveedoresActual = productoActual.getProveedores();
+        for (int i = 0; i < proveedoresActual.size(); i++) {
+            if (proveedoresActual.get(i).getId() == proveedor.getId()) {
+                existe = true;
+            }
+        }
+        if(existe){
+            response.put("msg","El producto ya tiene al proveedor con id = ".concat(proveedor.getId().toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        productoActual.getProveedores().add(proveedor);
+        try {
+            productoActual = productoService.save(productoActual);
+        }catch(DataAccessException e) {
+            response.put("msg","Error al intentar modificar el producto");
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("msg", "Proveedor asociado correctamente al producto");
+        response.put("producto", productoActual);
+        return new ResponseEntity<Map<String,Object>>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/quitarProveedor/{id}")
+    public ResponseEntity<?> quitarProveedor(@Valid @RequestBody Proveedor proveedor, BindingResult result, @PathVariable(value="id")Long id ) {
+
+        Producto productoActual = productoService.findById(id);
+        Map<String,Object> response = new HashMap<>();
+        List<String> error = new ArrayList<>();
+        if(productoActual == null) {
+            response.put("msg","No existe un producto con id = ".concat(id.toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        //este control creo que no es necesario
+        if(proveedorService.findById(proveedor.getId()) == null){
+            response.put("msg","No existe un proveedor con id = ".concat(proveedor.getId().toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        Boolean existe = false;
+        List<Proveedor> proveedoresActual = productoActual.getProveedores();
+        for (int i = 0; i < proveedoresActual.size(); i++) {
+            if (proveedoresActual.get(i).getId() == proveedor.getId()) {
+                proveedoresActual.remove(i);
+                existe = true;
+            }
+        }
+        if(!existe){
+            response.put("msg","El producto no tiene un proveedor con id = ".concat(proveedor.getId().toString()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        productoActual.setProveedores(proveedoresActual);
+        try {
+            productoActual = productoService.save(productoActual);
+        }catch(DataAccessException e) {
+            response.put("msg","Error al intentar modificar el producto");
+            error.add(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", error);
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("msg", "Proveedor quitado correctamente");
         response.put("producto", productoActual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
     }
