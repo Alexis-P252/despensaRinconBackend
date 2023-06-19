@@ -29,7 +29,6 @@ public class Producto {
 
     @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "proveedor_id", nullable = true)
-    @JsonIgnore
     private List<Proveedor> proveedores;
 
     @JsonProperty("proveedores")
