@@ -21,8 +21,11 @@ public class EstadisticaController {
     private EstadisticaService estadisticaService;
 ///1
     @GetMapping("/1")
-    public List<Estadistica> cantProductosPorCategoria(){
-        return estadisticaService.cantProductosPorCategoria();
+    public ResponseEntity<?> cantProductosPorCategoria(){
+        Map<String, Object> response = new HashMap<>();
+        List<Estadistica> resultado = estadisticaService.cantProductosPorCategoria();
+        response.put("resultado", resultado);
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 ///2
    @GetMapping("/2/{fechaI},{fechaF}")
@@ -278,8 +281,11 @@ public class EstadisticaController {
     }
 ///9 ventaUltimos7Dias
     @GetMapping("/9")
-    public List<Estadistica> ventaUltimos7Dias(){
-        return estadisticaService.ventaUltimos7Dias();
+    public ResponseEntity<?> ventaUltimos7Dias(){
+        Map<String, Object> response = new HashMap<>();
+        List<Estadistica> resultado = estadisticaService.ventaUltimos7Dias();
+        response.put("resultado", resultado);
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
 

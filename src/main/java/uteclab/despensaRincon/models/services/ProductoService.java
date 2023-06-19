@@ -38,6 +38,10 @@ public class ProductoService implements IProductoService {
     public Producto findById(Long id) {
         return productoDao.findById(id).orElse(null);
     }
+    @Override
+    public List<Producto>  findByProveedor (Long proveedor_id) {
+        return productoDao.findByProveedor(proveedor_id);
+    }
 
     @Override
     public Producto findByNombre(String nombre) {
@@ -138,5 +142,6 @@ public class ProductoService implements IProductoService {
             }
         }
     }
+
 
 }

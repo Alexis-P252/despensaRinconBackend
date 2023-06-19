@@ -24,7 +24,6 @@ public class Compra {
     private List<LineaCompra> lineasCompra;
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name="proveedor_id", nullable = true)
-    @NotNull
     private Proveedor proveedor;
 
     public Long getId() {
