@@ -1,8 +1,7 @@
 BACKEND:
 
-Arreglar plantilla de envio de correos:
+
 Cuando se elimina un proveedor, obtener todos los productos y compras relacionados, y para cada uno, eliminar el proveedor del arreglo de proveedores.
-Cuando se elimina un cliente, obtener las ventas y desvincular
 Hacer metodo desvincular proveedor de producto (desde el producto)
 ESTADISTICAS
 
