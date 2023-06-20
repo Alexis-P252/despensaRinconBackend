@@ -29,8 +29,7 @@ public class ProductoController {
     @Autowired
     private ProveedorService proveedorService;
 
-    @Autowired
-    private ProveedorService proveedorService;
+
 
     @GetMapping("")
     public List<Producto> findAll() {
