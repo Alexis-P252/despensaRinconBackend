@@ -21,9 +21,8 @@ public class LineaCompra implements Serializable {
     @Min(1)
     @NotNull
     private Float precio;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "producto_id")
-    @NotNull
     private Producto producto;
 
     public Long getId() {
