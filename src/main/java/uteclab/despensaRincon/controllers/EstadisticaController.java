@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.annotations.VerificarToken;
 import uteclab.despensaRincon.entities.Estadistica;
 import uteclab.despensaRincon.models.services.EstadisticaService;
 
@@ -20,6 +21,7 @@ public class EstadisticaController {
     @Autowired
     private EstadisticaService estadisticaService;
 ///1
+    @VerificarToken
     @GetMapping("/1")
     public ResponseEntity<?> cantProductosPorCategoria(){
         Map<String, Object> response = new HashMap<>();
@@ -28,7 +30,8 @@ public class EstadisticaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 ///2
-   @GetMapping("/2/{fechaI},{fechaF}")
+    @VerificarToken
+    @GetMapping("/2/{fechaI},{fechaF}")
     public ResponseEntity<?> cantVentasPorCategoria (@PathVariable(value = "fechaI") String fechaI, @PathVariable(value = "fechaF") String fechaF) {
         Map<String, Object> response = new HashMap<>();
         ArrayList<String> error = new ArrayList<>();
@@ -64,6 +67,7 @@ public class EstadisticaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 ///3
+    @VerificarToken
     @GetMapping("/3/{fechaI},{fechaF}")
     public ResponseEntity<?> ganancia (@PathVariable(value = "fechaI") String fechaI, @PathVariable(value = "fechaF") String fechaF) {
         Map<String, Object> response = new HashMap<>();
@@ -100,6 +104,7 @@ public class EstadisticaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 ///4
+    @VerificarToken
     @GetMapping("/4/{fechaI},{fechaF}")
     public ResponseEntity<?> productosMasVendidos (@PathVariable(value = "fechaI") String fechaI, @PathVariable(value = "fechaF") String fechaF) {
         Map<String, Object> response = new HashMap<>();
@@ -136,6 +141,7 @@ public class EstadisticaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 ///5
+    @VerificarToken
     @GetMapping("/5/{fechaI},{fechaF}")
     public ResponseEntity<?> productosMasComprados (@PathVariable(value = "fechaI") String fechaI, @PathVariable(value = "fechaF") String fechaF) {
         Map<String, Object> response = new HashMap<>();
@@ -172,6 +178,7 @@ public class EstadisticaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 ///6
+    @VerificarToken
     @GetMapping("/6/{fechaI},{fechaF}")
     public ResponseEntity<?> cantVentaClientesRegulares (@PathVariable(value = "fechaI") String fechaI, @PathVariable(value = "fechaF") String fechaF) {
         Map<String, Object> response = new HashMap<>();
@@ -208,6 +215,7 @@ public class EstadisticaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 ///7
+    @VerificarToken
     @GetMapping("/7/{fechaI},{fechaF}")
     public ResponseEntity<?> comprasProveedores (@PathVariable(value = "fechaI") String fechaI, @PathVariable(value = "fechaF") String fechaF) {
         Map<String, Object> response = new HashMap<>();
@@ -244,6 +252,7 @@ public class EstadisticaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 ///8
+    @VerificarToken
     @GetMapping("/8/{fechaI},{fechaF}")
     public ResponseEntity<?> mejoresClientes (@PathVariable(value = "fechaI") String fechaI, @PathVariable(value = "fechaF") String fechaF) {
         Map<String, Object> response = new HashMap<>();
@@ -280,6 +289,7 @@ public class EstadisticaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 ///9 ventaUltimos7Dias
+    @VerificarToken
     @GetMapping("/9")
     public ResponseEntity<?> ventaUltimos7Dias(){
         Map<String, Object> response = new HashMap<>();
@@ -287,6 +297,4 @@ public class EstadisticaController {
         response.put("resultado", resultado);
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
-
-
 }

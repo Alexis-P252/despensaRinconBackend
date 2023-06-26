@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.annotations.VerificarToken;
 import uteclab.despensaRincon.entities.Vendedor;
 import uteclab.despensaRincon.models.services.VendedorService;
 
@@ -23,10 +24,12 @@ public class VendedorController {
     @Autowired
     private VendedorService vendedorService;
 
+    @VerificarToken
     @GetMapping("")
     public List<Vendedor> findAll() {
         return vendedorService.findAll();
     }
+    @VerificarToken
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
 
@@ -47,6 +50,7 @@ public class VendedorController {
         }
         return new ResponseEntity<Vendedor>(ve,HttpStatus.OK);
     }
+    @VerificarToken
     @PostMapping("")
     public ResponseEntity<?> create(@RequestBody Vendedor vendedor)     {
         Vendedor newVendedor =null;
@@ -75,6 +79,7 @@ public class VendedorController {
         response.put("vendedor", newVendedor);
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
+    @VerificarToken
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Vendedor vendedor, BindingResult result, @PathVariable(value="id")Long id ) {
         Vendedor vendedorActual = vendedorService.findById(id);
@@ -124,6 +129,7 @@ public class VendedorController {
         response.put("producto", vendedorActual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
     }
+    @VerificarToken
     @GetMapping("buscar/{query}")
     public ResponseEntity<?> buscarVendedor (@RequestParam(value = "query",required = false) String query){
         Map<String, Object> response = new HashMap<>();
@@ -142,6 +148,7 @@ public class VendedorController {
         }
         return new ResponseEntity<List<Vendedor>>(vendedores, HttpStatus.OK);
     }
+    @VerificarToken
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         Map<String, Object> response = new HashMap<>();

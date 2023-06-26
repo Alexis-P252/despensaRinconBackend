@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.annotations.VerificarToken;
 import uteclab.despensaRincon.entities.ClienteRegular;
 import uteclab.despensaRincon.entities.Pedido;
 import uteclab.despensaRincon.models.services.ClienteRegularService;
@@ -63,8 +64,6 @@ public class PedidoController {
         }
         return new ResponseEntity<Pedido>(pedido,HttpStatus.OK);
     }
-
-
 
     @PostMapping("")
     public ResponseEntity<?> save(@Valid @RequestBody Pedido pedido, BindingResult result){
@@ -141,7 +140,7 @@ public class PedidoController {
         response.put("msg", "Pedido marcado como finalizado correctamente!");
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.OK);
     }
-
+    @VerificarToken
     @DeleteMapping("{id}")
     public ResponseEntity<?> eliminar(@PathVariable(value="id") Long id ){
 
@@ -169,7 +168,8 @@ public class PedidoController {
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
     }
-//se puede mandar cedula para buscar por cliente, detalle para buscar dentro del pedido o finalizado, pendiente o todos(para este ultimo debe ser null el finalizado)
+    //se puede mandar cedula para buscar por cliente, detalle para buscar dentro del pedido o finalizado, pendiente o todos(para este ultimo debe ser null el finalizado)
+    @VerificarToken
     @GetMapping("buscar/{cedula}/{contenido}/{finalizados}")
     public ResponseEntity<?> buscarPedido (@RequestParam(value = "cedula",required = false) String cedula,@RequestParam(value = "contenido",required = false) String contenido, @RequestParam(value = "finalizados",required = false) Boolean finalizado){
         Map<String, Object> response = new HashMap<>();
