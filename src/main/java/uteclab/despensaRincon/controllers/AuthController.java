@@ -64,22 +64,7 @@ public class AuthController {
         }
     }
 
-    /*@GetMapping("prueba")
-    public ResponseEntity<?> pruebaEmail(){
 
-        List<String> destinatarios = new ArrayList();
-        destinatarios.add("aleperalta252@gmail.com");
-        destinatarios.add("alexis.peralta@estudiantes.utec.edu.uy");
-
-        String titulo = "Esto es una prueba";
-
-        String contenido = "Prueba de envio de mails";
-
-
-       String res = emailService.mandarEmail(destinatarios.toArray(new String[0]), titulo,contenido);
-       return new ResponseEntity<String>(res, HttpStatus.OK);
-    }
-    */
 
 
     
