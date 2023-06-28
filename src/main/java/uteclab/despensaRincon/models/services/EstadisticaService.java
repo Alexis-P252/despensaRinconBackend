@@ -6,9 +6,10 @@ import org.springframework.stereotype.Service;
 import uteclab.despensaRincon.entities.Estadistica;
 import uteclab.despensaRincon.models.dao.IEstadisticaDao;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 @Service
 public class EstadisticaService {
 
@@ -77,14 +78,51 @@ public class EstadisticaService {
     }
 ///9 ventaUltimos7Dias
     public List<Estadistica>  ventaUltimos7Dias(){
-    List<Object[]> resultados = estadisticaDao.ventaUltimos7Dias();
-    List<Estadistica> estadisticas = new ArrayList<>();
+
+        List<Object[]> resultados = estadisticaDao.ventaUltimos7Dias();
+        List<Estadistica> estadisticas = new ArrayList<>();
+
+        // Crear un mapa para almacenar los resultados existentes
+        Map<String, Float> estadisticasMap = new HashMap<>();
         for (Object[] resultado : resultados) {
-            Estadistica estadistica = new Estadistica();
-            estadistica.setNombre( resultado[0].toString());
-            estadistica.setCant1(((Number) resultado[1]).floatValue());
-            estadisticas.add(estadistica);
+            String fechaStr = resultado[0].toString();
+            Float total = ((Number) resultado[1]).floatValue();
+            estadisticasMap.put(fechaStr, total);
         }
+
+        // Obtener la fecha actual en formato "yyyy-MM-dd"
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String fechaActual = dateFormat.format(new Date());
+
+        // Iterar sobre los últimos 7 días, incluyendo aquellos sin ventas registradas
+        Calendar calendar = Calendar.getInstance();
+        for (int i = 0; i < 7; i++) {
+            try {
+                calendar.setTime(dateFormat.parse(fechaActual));
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            calendar.add(Calendar.DAY_OF_YEAR, -i);
+            String fechaStr = dateFormat.format(calendar.getTime());
+
+            // Verificar si existe un resultado para la fecha actual en el mapa
+            if (estadisticasMap.containsKey(fechaStr)) {
+                Float total = estadisticasMap.get(fechaStr);
+
+                // Crear un objeto Estadistica y agregarlo a la lista
+                Estadistica estadistica = new Estadistica();
+                estadistica.setNombre(fechaStr);
+                estadistica.setCant1(total);
+                estadisticas.add(estadistica);
+            } else {
+                // Si no hay resultado para la fecha actual, agregar un objeto Estadistica con valor 0
+                Estadistica estadistica = new Estadistica();
+                estadistica.setNombre(fechaStr);
+                estadistica.setCant1(0.0f);
+                estadisticas.add(estadistica);
+            }
+        }
+
         return estadisticas;
     }
 }
