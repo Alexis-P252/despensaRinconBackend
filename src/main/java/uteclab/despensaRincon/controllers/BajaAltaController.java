@@ -27,10 +27,12 @@ public class BajaAltaController {
     private BajaAltaService bajaAltaService;
     @Autowired
     private ProductoService productoService;
+    @VerificarToken
     @GetMapping("")
     public List<BajaAlta> findAll() {
         return bajaAltaService.findAll();
     }
+    @VerificarToken
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         BajaAlta ba = null;
@@ -51,8 +53,8 @@ public class BajaAltaController {
         }
         return new ResponseEntity<BajaAlta>(ba,HttpStatus.OK);
     }
+    @VerificarToken
     @PostMapping("")
-
     public ResponseEntity<?> create(@Valid @RequestBody BajaAlta bajaAlta, BindingResult result)     {
         Map<String, Object> response = new HashMap<>();
         List<String> error = new ArrayList<>();
@@ -92,7 +94,7 @@ public class BajaAltaController {
         response.put("baja_alta",bajaAlta);
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
-
+    @VerificarToken
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(value="id") Long id) {
         BajaAlta bajaAlta = bajaAltaService.findById(id);
@@ -125,9 +127,5 @@ public class BajaAltaController {
         response.put("msg","La "+queEs+" eliminada correctamente");
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
-
-
-
-
 
 }

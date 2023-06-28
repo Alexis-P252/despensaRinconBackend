@@ -9,6 +9,7 @@ import com.fabdelgado.ciuy.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.annotations.VerificarToken;
 import uteclab.despensaRincon.entities.ClienteRegular;
 import uteclab.despensaRincon.models.services.ClienteRegularService;
 
@@ -24,12 +25,12 @@ public class ClienteRegularController {
 
     @Autowired
     ClienteRegularService clienteRegularService;
-
+    @VerificarToken
     @GetMapping("")
     public List<ClienteRegular> findAll(){
         return  clienteRegularService.findAll();
     }
-
+    @VerificarToken
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         ClienteRegular cr = null;
@@ -50,7 +51,7 @@ public class ClienteRegularController {
         return new ResponseEntity<ClienteRegular>(cr,HttpStatus.OK);
 
     }
-
+    @VerificarToken
     @PostMapping("")
     public ResponseEntity<?> create(@Valid @RequestBody ClienteRegular clienteR, BindingResult result){
         ClienteRegular newClienteR = null;
@@ -100,8 +101,7 @@ public class ClienteRegularController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
-
-
+    @VerificarToken
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id){
 
@@ -127,7 +127,7 @@ public class ClienteRegularController {
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
         }
     }
-
+    @VerificarToken
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody ClienteRegular cr, BindingResult result,  @PathVariable(value="id")Long id){
 
@@ -183,6 +183,7 @@ public class ClienteRegularController {
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
     }
     /* va a buscar por cedula(filtra todo lo que no es numero), nombre y correo */
+    @VerificarToken
     @GetMapping("buscar/{query}")
     public ResponseEntity<?> buscarCliente (@RequestParam(value = "query",required = false) String query){
         Map<String, Object> response = new HashMap<>();

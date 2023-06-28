@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.annotations.VerificarToken;
 import uteclab.despensaRincon.entities.Categoria;
 import uteclab.despensaRincon.models.services.CategoriaService;
 
@@ -22,10 +23,12 @@ import java.util.Map;
 public class CategoriaController {
     @Autowired
     private CategoriaService categoriaService;
+    @VerificarToken
     @GetMapping("")
     public List<Categoria> findAll() {
         return categoriaService.findAll();
     }
+    @VerificarToken
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         Categoria ca = null;
@@ -46,7 +49,7 @@ public class CategoriaController {
         }
         return new ResponseEntity<Categoria>(ca,HttpStatus.OK);
     }
-
+    @VerificarToken
     @PostMapping("")
     public ResponseEntity<?> create(@Valid @RequestBody Categoria categoria, BindingResult result)     {
         Categoria newCategoria =null;
@@ -78,7 +81,7 @@ public class CategoriaController {
         response.put("categoria", newCategoria);
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
-
+    @VerificarToken
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Categoria categoria, BindingResult result, @PathVariable(value="id")Long id  ) {
 
@@ -117,7 +120,7 @@ public class CategoriaController {
         response.put("categoria", categoriaActual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
     }
-
+    @VerificarToken
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(value="id") Long id) {
 
@@ -144,6 +147,7 @@ public class CategoriaController {
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
     }
+    @VerificarToken
     @GetMapping("buscar/{query}")
     public ResponseEntity<?> buscarCategoria (@RequestParam(value = "query",required = false) String query){
         Map<String, Object> response = new HashMap<>();
@@ -162,7 +166,5 @@ public class CategoriaController {
         }
         return new ResponseEntity<List<Categoria>>(categorias, HttpStatus.OK);
     }
-
-
 
 }

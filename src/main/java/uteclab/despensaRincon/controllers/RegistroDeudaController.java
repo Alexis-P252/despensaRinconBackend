@@ -1,3 +1,4 @@
+/*
 package uteclab.despensaRincon.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,3 +90,4 @@ public class RegistroDeudaController {
     }
 
 }
+*/

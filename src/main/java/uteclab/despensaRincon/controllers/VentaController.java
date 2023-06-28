@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.annotations.VerificarToken;
 import uteclab.despensaRincon.entities.Compra;
 import uteclab.despensaRincon.entities.LineaCompra;
 import uteclab.despensaRincon.entities.Producto;
@@ -28,12 +29,12 @@ public class VentaController {
 
     @Autowired
     private IVentaService ventaService;
-
+    @VerificarToken
     @GetMapping("")
     public List<Venta> findAll(){
         return ventaService.findAll();
     }
-
+    @VerificarToken
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable(value = "id") Long id){
 
@@ -57,7 +58,7 @@ public class VentaController {
 
         return new ResponseEntity<Venta>(venta, HttpStatus.OK);
     }
-
+    @VerificarToken
     @PostMapping("")
     public ResponseEntity<?> create(@RequestBody Venta venta, BindingResult result){
 
@@ -98,7 +99,7 @@ public class VentaController {
         return new ResponseEntity<Map<String,Object>>( response, HttpStatus.CREATED);
 
     }
-
+    @VerificarToken
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(value="id") Long id){
         Map<String, Object> response = new HashMap<>();
@@ -124,8 +125,5 @@ public class VentaController {
         response.put("msg","Venta eliminada correctamente");
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
-
-
-
 
 }
