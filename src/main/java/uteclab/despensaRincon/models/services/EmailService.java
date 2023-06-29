@@ -39,31 +39,38 @@ public class EmailService {
         return "Enviado correctamente";
 
     }
-    public String mandarEmailHtml( String titulo, String contenido){
+
+    public String mandarEmailHtml(String titulo, String contenido) {
         List<String> destinatarios = clienteRegularService.findAllCorreos();
         MimeMessage message = javaMailSender.createMimeMessage();
         InternetAddress[] direcciones = new InternetAddress[destinatarios.size()];
 
-        for(int i = 0; i < destinatarios.size(); i++){
-            try{
-                if(destinatarios.get(i)!=null) {
+        for (int i = 0; i < destinatarios.size(); i++) {
+            try {
+                if (destinatarios.get(i) != null) {
                     direcciones[i] = new InternetAddress(destinatarios.get(i));
                 }
-            }catch(MessagingException e){
+            } catch (MessagingException e) {
                 return "Error al crear direcciones de correo";
             }
-
         }
-        try{
+
+        try {
             message.setFrom(new InternetAddress("despensarincon@gmail.com"));
             message.setRecipients(MimeMessage.RecipientType.TO, direcciones);
             message.setSubject(titulo);
             String htmlContent = crearCorreo(titulo, contenido);
             message.setContent(htmlContent, "text/html; charset=utf-8");
-            javaMailSender.send(message);
-        }catch(MessagingException e){
+
+            // Crear y ejecutar un nuevo hilo para el envío del correo
+            Thread thread = new Thread(() -> {
+                javaMailSender.send(message);
+            });
+            thread.start();
+        } catch (MessagingException e) {
             return "Error al enviar los correos";
         }
+
         return "Correos enviados correctamente";
     }
 
