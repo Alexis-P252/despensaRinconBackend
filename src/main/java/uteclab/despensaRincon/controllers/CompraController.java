@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.annotations.VerificarToken;
 import uteclab.despensaRincon.entities.Compra;
 import uteclab.despensaRincon.entities.LineaCompra;
 import uteclab.despensaRincon.entities.Producto;
@@ -33,12 +34,12 @@ public class CompraController {
     private ProveedorService proveedorService;
     @Autowired
     private ProductoService productoService;
-    
+    @VerificarToken
     @GetMapping("")
     public List<Compra> findAll() {
         return compraService.findAll();
     }
-
+    @VerificarToken
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         Compra compra = null;
@@ -59,6 +60,7 @@ public class CompraController {
         }
         return new ResponseEntity<Compra>(compra,HttpStatus.OK);
     }
+    @VerificarToken
     @PostMapping("")
     public ResponseEntity<?> create(@Valid @RequestBody Compra compra, BindingResult result){
         Compra compraNew = null;
@@ -124,6 +126,7 @@ public class CompraController {
         response.put("compra",compraNew);
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
+    @VerificarToken
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(value="id") Long id) {
         Map<String, Object> response = new HashMap<>();
@@ -163,8 +166,5 @@ public class CompraController {
 
             response.put("msg","Compra eliminado correctamente");
             return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
-
     }
-
-
 }

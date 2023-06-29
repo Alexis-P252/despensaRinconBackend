@@ -8,6 +8,7 @@ import org.springframework.util.backoff.BackOff;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.annotations.VerificarToken;
 import uteclab.despensaRincon.entities.Proveedor;
 import uteclab.despensaRincon.entities.Vendedor;
 import uteclab.despensaRincon.models.services.ProveedorService;
@@ -29,12 +30,13 @@ public class ProveedorController {
     private ProveedorService proveedorService;
     @Autowired
     private VendedorService vendedorService;
-
+    @VerificarToken
     @GetMapping("")
     public List<Proveedor> findAll() {
         return proveedorService.findAll();
     }
 
+    @VerificarToken
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable(value="id") Long id){
         Proveedor proveedor = null;
@@ -54,6 +56,7 @@ public class ProveedorController {
         }
         return new ResponseEntity<Proveedor>(proveedor,HttpStatus.OK);
     }
+    @VerificarToken
     @PostMapping("")
     public ResponseEntity<?> create(@RequestBody Proveedor proveedor)     {
         Proveedor newProveedor =null;
@@ -76,7 +79,7 @@ public class ProveedorController {
         response.put("proveedor", newProveedor);
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
-
+    @VerificarToken
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Proveedor proveedor, BindingResult result, @PathVariable(value="id")Long id ) {
 
@@ -124,6 +127,7 @@ public class ProveedorController {
         response.put("proveedor", proveedorActual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
     }
+    @VerificarToken
     @PutMapping("/vendedor/{id}")
     public ResponseEntity<?> addVendedor(@Valid @RequestBody Vendedor vendedor, BindingResult result, @PathVariable(value="id")Long id ) {
         Proveedor proveedorActual = proveedorService.findById(id);
@@ -163,6 +167,7 @@ public class ProveedorController {
         response.put("proveedor", proveedorActual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
     }
+    @VerificarToken
     @PutMapping("/vendedorQuitar/{id}")
     public ResponseEntity<?> removeVendedor(@Valid @RequestBody Vendedor vendedor, BindingResult result, @PathVariable(value="id")Long id ) {
         Proveedor proveedorActual = proveedorService.findById(id);
@@ -202,7 +207,7 @@ public class ProveedorController {
         response.put("proveedor", proveedorActual);
         return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
     }
-
+    @VerificarToken
     @GetMapping("buscar/{query}")
     public ResponseEntity<?> buscarProveedor (@RequestParam(value = "query",required = false) String query){
         Map<String, Object> response = new HashMap<>();
@@ -221,6 +226,7 @@ public class ProveedorController {
         }
         return new ResponseEntity<List<Proveedor>>(proveedores, HttpStatus.OK);
     }
+    @VerificarToken
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         Map<String, Object> response = new HashMap<>();

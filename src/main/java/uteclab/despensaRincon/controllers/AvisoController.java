@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import uteclab.despensaRincon.annotations.VerificarToken;
 import uteclab.despensaRincon.entities.Aviso;
 import uteclab.despensaRincon.models.services.AvisoService;
 import uteclab.despensaRincon.models.services.EmailService;
@@ -52,6 +53,7 @@ public class AvisoController {
         return new ResponseEntity<Aviso>(aviso, HttpStatus.OK);
     }
 
+    @VerificarToken
     @PostMapping("")
     public ResponseEntity<?> create(@Valid @RequestBody Aviso aviso, BindingResult result) {
         Aviso newAviso = null;
@@ -81,6 +83,7 @@ public class AvisoController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
+    @VerificarToken
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Aviso aviso, BindingResult result, @PathVariable(value = "id") Long id) {
 
@@ -124,7 +127,7 @@ public class AvisoController {
         response.put("aviso", avisoActual);
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
-
+    @VerificarToken
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         Map<String, Object> response = new HashMap<>();
@@ -153,7 +156,7 @@ public class AvisoController {
         }
 
     }
-
+    @VerificarToken
     @PutMapping("reenvio/{id}")
     public ResponseEntity<?> reenvioAviso (@PathVariable(value = "id") Long id){
         Aviso aviso = null;
@@ -184,6 +187,7 @@ public class AvisoController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
     //busca por titulo y por descripcion
+    @VerificarToken
     @GetMapping("buscar/{query}")
     public ResponseEntity<?> buscarAviso (@RequestParam(value = "query",required = false) String query){
         Map<String, Object> response = new HashMap<>();
