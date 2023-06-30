@@ -19,8 +19,7 @@ public interface IEstadisticaDao extends CrudRepository<Producto, Long> {
             "FROM Categoria c " +
             "INNER JOIN Producto p ON c.id = p.categoria_id " +
             "INNER JOIN Linea_Venta l ON p.id = l.producto_id " +
-            "INNER JOIN venta_lineas_venta vlv ON l.id = vlv.lineas_venta_id " +
-            "INNER JOIN Venta v ON vlv.venta_id = v.id " +
+            "INNER JOIN Venta v ON l.venta_id = v.id " +
             "WHERE v.fecha BETWEEN :fechaInicial AND :fechaFinal " +
             "GROUP BY c.id", nativeQuery = true)
     List<Object[]> getCantidadVentasPorCategoria (@Param("fechaInicial") Date fechaInicial, @Param("fechaFinal") Date fechaFinal);
@@ -33,8 +32,7 @@ public interface IEstadisticaDao extends CrudRepository<Producto, Long> {
 @Query(value = "SELECT p.nombre, SUM(l.cantidad) as cantidad, SUM(l.precio) " +
         "FROM Producto p " +
         "INNER JOIN Linea_Venta l ON p.id = l.producto_id " +
-        "INNER JOIN venta_lineas_venta vlv ON l.id = vlv.lineas_venta_id " +
-        "INNER JOIN Venta v ON vlv.venta_id = v.id  " +
+        "INNER JOIN Venta v ON l.venta_id = v.id  " +
         "WHERE v.fecha BETWEEN :fechaInicial AND :fechaFinal " +
         "GROUP BY p.id " +
         "ORDER BY cantidad DESC LIMIT 5 ", nativeQuery = true)
