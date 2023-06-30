@@ -7,6 +7,9 @@ import uteclab.despensaRincon.entities.LineaCompra;
 import uteclab.despensaRincon.entities.Proveedor;
 import uteclab.despensaRincon.models.dao.ICompraDao;
 
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -45,6 +48,13 @@ public class CompraService implements ICompraService {
             total= total + lc.getPrecio();
         }
         compra.setTotal(total);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(compra.getFecha());
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        Date diaSiguiente = calendar.getTime();
+        compra.setFecha(diaSiguiente);
+
         return compraDao.save(compra);
     }
 

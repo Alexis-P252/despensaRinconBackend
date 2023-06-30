@@ -7,6 +7,8 @@ import uteclab.despensaRincon.entities.Venta;
 import uteclab.despensaRincon.exceptions.StockInsuficienteException;
 import uteclab.despensaRincon.models.dao.IVentaDao;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -44,6 +46,12 @@ public class VentaService implements IVentaService {
         }
 
         venta.setTotal(total);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(venta.getFecha());
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        Date diaSiguiente = calendar.getTime();
+        venta.setFecha(diaSiguiente);
 
         return ventaDao.save(venta);
     }

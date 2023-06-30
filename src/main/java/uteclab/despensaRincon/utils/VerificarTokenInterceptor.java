@@ -44,7 +44,6 @@ public class VerificarTokenInterceptor implements HandlerInterceptor {
             }
 
             jwt = jwt.substring(7, jwt.length());
-            System.out.println("jwt = " + jwt);
             if(! jwtUtil.verifyToken(jwt)){
 
                 response.setContentType("application/json");
