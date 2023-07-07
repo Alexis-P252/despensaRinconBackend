@@ -8,11 +8,9 @@ public class LineaVenta {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotEmpty
     private Long cantidad;
-    @NotEmpty
     private Float precio;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.DETACH)
     private Producto producto;
 
     public Long getId() {

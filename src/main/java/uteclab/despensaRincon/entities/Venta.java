@@ -11,12 +11,14 @@ public class Venta {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotEmpty
+    @Temporal(TemporalType.DATE)
+
     private Date fecha;
     private String comentario;
     private Float total;
     private Float montoDeuda;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "venta_id")
     private List<LineaVenta> lineasVenta;
   //  @Column(nullable = true)
     @ManyToOne

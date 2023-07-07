@@ -13,9 +13,16 @@ public class Pedido {
     @NotEmpty
     private String contenido;
     private Boolean finalizado;
+    @NotEmpty
+    private String cedula;
 
     @ManyToOne
     private ClienteRegular cliente;
+
+
+    public Pedido() {
+        this.finalizado = false;
+    }
 
     public Long getId() {
         return id;
@@ -47,5 +54,13 @@ public class Pedido {
 
     public void setCliente(ClienteRegular cliente) {
         this.cliente = cliente;
+    }
+
+    public String getCedula() {
+        return cedula;
+    }
+
+    public void setCedula(String cedula) {
+        this.cedula = cedula;
     }
 }

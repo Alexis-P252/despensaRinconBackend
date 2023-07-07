@@ -1,18 +1,28 @@
 package uteclab.despensaRincon.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+import java.io.Serializable;
 
 @Entity
-public class LineaCompra {
+@Data
+public class LineaCompra implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotEmpty
+    @NotNull
+    @Min(1)
     private Long cantidad;
-    @NotEmpty
+    @Min(1)
+    @NotNull
     private Float precio;
     @ManyToOne
+    @JoinColumn(name = "producto_id")
     private Producto producto;
 
     public Long getId() {
@@ -38,6 +48,8 @@ public class LineaCompra {
     public void setPrecio(Float precio) {
         this.precio = precio;
     }
+
+
 
     public Producto getProducto() {
         return producto;

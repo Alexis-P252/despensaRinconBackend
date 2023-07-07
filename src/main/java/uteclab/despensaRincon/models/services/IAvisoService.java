@@ -11,4 +11,5 @@ public interface IAvisoService {
     public Aviso findById(Long id);
     public Aviso save (Aviso aviso);
     public void deleteById (Long id);
+    List<Aviso> buscarAvisos(String titulo, String descripcion);
 }

@@ -31,4 +31,8 @@ public class AvisoService implements IAvisoService{
     public void deleteById(Long id) {
         avisoDao.deleteById(id);
     }
+    @Override
+    public List<Aviso> buscarAvisos(String titulo, String descripcion) {
+        return  avisoDao.findByTituloContainingIgnoreCaseOrDescripcionContainingIgnoreCase(titulo, descripcion);
+    }
 }

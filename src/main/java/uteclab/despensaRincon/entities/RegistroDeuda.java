@@ -11,8 +11,9 @@ public class RegistroDeuda {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @NotEmpty
+    @Temporal(TemporalType.DATE)
     private Date fecha;
-    @NotEmpty
+
     private Float monto;
     @ManyToOne
     private ClienteRegular cliente;

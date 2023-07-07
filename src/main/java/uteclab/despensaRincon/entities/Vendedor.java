@@ -1,10 +1,11 @@
 package uteclab.despensaRincon.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+
+import java.util.List;
 
 
 @Entity
@@ -16,9 +17,21 @@ public class Vendedor {
     private String nombre;
     private String telefono;
     private String  correo;
+    @ManyToMany
+    @JsonIgnore
+    private List<Proveedor> proveedores;
 
     public Long getId() {
         return id;
+    }
+
+    //@JsonInclude(JsonInclude.Include.ALWAYS)
+    public List<Proveedor> getProveedores() {
+        return proveedores;
+    }
+
+    public void setProveedores(List<Proveedor> proveedores) {
+        this.proveedores = proveedores;
     }
 
     public void setId(Long id) {
